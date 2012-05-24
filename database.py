@@ -1,3 +1,5 @@
+#Copyright Sheena C. McNeil
+
 import sys
 import os
 import sqlite3
@@ -26,9 +28,8 @@ def Add_to_db():
 				VEGGIES.append('none')
 
 
-		cur.execute("select * from recipes")
 		flag = False
-		for row in cur:
+		for row in cur.execute("select * from recipes"):
 			if row[0] == recipe:
 				flag = True
 
@@ -40,12 +41,24 @@ def Add_to_db():
 		if go_on == 'n':
 			keep_adding = False
 
+def Delete_from_db():
+	keep_deleting = True
+	while keep_deleting == True:
+		print 'roar'
+		to_be_deleted = raw_input("Recipe name to delete: ")
+		query = "delete from recipes where recipe_name = '%s'" % to_be_deleted
+		cur.execute(query)
+		conn.commit()
+	
+		go_on = raw_input('Keep deleting? (y/n): ')
+		if go_on == 'n':
+			keep_deleting = False
+
 def Print_db():
-	cur.execute("select * from recipes")
-	for row in cur:
-		print '-'*10
-		print 'Recipe:', row[0]
-		print 'Meat:', row[1]
+		for row in cur.execute("select * from recipes"):
+			print '-'*10
+			print 'Recipe:', row[0]
+			print 'Meat:', row[1]
 		for x in range(2, 6):
 			if row[x] != 'none':
 				print 'Veggie', (x-1), ':', row[x] 
