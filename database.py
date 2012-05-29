@@ -8,7 +8,7 @@ conn = sqlite3.connect("recipes.db")
 cur = conn.cursor()
 
 try:
-    cur.execute("create table if not exists recipes(recipe_name text, meat text, veggie_one text, veggie_two text, veggie_three text, veggie_four text)")
+    cur.execute("create table if not exists recipes(recipe_name text, meat text, veggie_one text, veggie_two text, veggie_three text, veggie_four text, recipe_file text)")
 except:
     pass
 	
@@ -16,11 +16,11 @@ def Add_to_db():
 	keep_adding = True
 	while keep_adding == True:
 		recipe = raw_input('Recipe name: ')
-		meat = raw_input('type of meat: ')
+		meat = raw_input('type of meat: ').lower()
 		num_veggies = raw_input('number of vegetables (up to four): ')
 		VEGGIES = []
 		for x in range(0, int(num_veggies)):
-			veggie = raw_input('veggie: ')
+			veggie = raw_input('veggie: ').lower()
 			VEGGIES.append(veggie)
 
 		if int(num_veggies) < 4:
@@ -34,10 +34,20 @@ def Add_to_db():
 				flag = True
 
 		if flag == False:
-			cur.execute("insert into recipes values (?,?,?,?,?,?)", (recipe, meat, VEGGIES[0], VEGGIES[1], VEGGIES[2], VEGGIES[3]))
+			#open the file and read it in to a string.
+			#use the string as the text for the database.
+			f = recipe.lower() + '.txt'
+			g = open(f)
+			line = g.readline()
+			recipe_string = ''
+			while line:
+				recipe_string += line
+				line = g.readline()
+			
+			cur.execute("insert into recipes values (?,?,?,?,?,?,?)", (recipe, meat, VEGGIES[0], VEGGIES[1], VEGGIES[2], VEGGIES[3], recipe_string))
 		conn.commit()
 
-		go_on = raw_input('Keep adding? (y/n): ')
+		go_on = raw_input('Keep adding? (y/n): ').lower()
 		if go_on == 'n':
 			keep_adding = False
 

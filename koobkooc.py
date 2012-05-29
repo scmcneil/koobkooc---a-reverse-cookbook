@@ -25,7 +25,7 @@ print ('OPTIONS: find a recipe or modify the database')
 keep_going = True
 while keep_going == True:
 	instruction = raw_input('INSTRUCTION: ')
-	if instruction != 'database' or instruction != 'recipes':
+	if instruction != 'database' and instruction != 'recipes':
 		print 'USAGE: "recipes" or "database"'
 		instruction = raw_input('INSTRUCTION: ')
 	elif instruction == 'database':
