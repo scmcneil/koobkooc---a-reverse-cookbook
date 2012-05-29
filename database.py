@@ -54,7 +54,6 @@ def Add_to_db():
 def Delete_from_db():
 	keep_deleting = True
 	while keep_deleting == True:
-		print 'roar'
 		to_be_deleted = raw_input("Recipe name to delete: ")
 		query = "delete from recipes where recipe_name = '%s'" % to_be_deleted
 		cur.execute(query)
@@ -65,12 +64,23 @@ def Delete_from_db():
 			keep_deleting = False
 
 def Print_db():
-		for row in cur.execute("select * from recipes"):
-			print '-'*10
-			print 'Recipe:', row[0]
-			print 'Meat:', row[1]
-		for x in range(2, 6):
-			if row[x] != 'none':
-				print 'Veggie', (x-1), ':', row[x] 
+	for row in cur.execute("select * from recipes"):
+		print '-'*10
+		print 'Recipe:', row[0]
+		print 'Meat:', row[1]
+	for x in range(2, 6):
+		if row[x] != 'none':
+			print 'Veggie', (x-1), ':', row[x] 
 
-
+def Find_recipe(MEAT, VEGGIES, NUM):
+	qualifying_recipes = []
+	query = "select * from recipes where meat = '%s'" % MEAT
+	for row in cur.execute(query):
+		matches = 0
+		for x in range(2, 7):
+			for y in range(0, NUM):
+				if VEGGIES[y] == row[x]:
+					matches += 1
+		if matches == NUM:
+			qualifying_recipes.append(row[0])
+	return qualifying_recipes

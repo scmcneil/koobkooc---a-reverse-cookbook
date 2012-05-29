@@ -17,8 +17,11 @@ def RECIPES():
 	num_veggies = raw_input("How many vegetables would you like to use? ")
 	VEGGIES = []
 	for x in range(0, int(num_veggies)):
-		veggie = raw_input("veggie: ")
+		veggie = raw_input("veggie: ").lower()
 		VEGGIES.append(veggie)
+	recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies))
+	for x in recipes:
+		print x
 
 print ('Welcome to koobkooc---a-reverse-cookbook')
 print ('OPTIONS: find a recipe or modify the database')
