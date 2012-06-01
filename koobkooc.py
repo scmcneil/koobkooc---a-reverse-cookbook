@@ -22,6 +22,8 @@ def RECIPES():
 	recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies))
 	for x in recipes:
 		print x
+	choose_recipe = raw_input("Which recipe would you like to view?")
+	database.Print_recipe(choose_recipe)
 
 print ('Welcome to koobkooc---a-reverse-cookbook')
 print ('OPTIONS: find a recipe or modify the database')

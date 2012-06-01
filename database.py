@@ -84,3 +84,8 @@ def Find_recipe(MEAT, VEGGIES, NUM):
 		if matches == NUM:
 			qualifying_recipes.append(row[0])
 	return qualifying_recipes
+
+def Print_recipe(RECIPE):
+	query = "select * from recipes where recipe_name = '%s'" % RECIPE
+	for row in cur.execute(query):
+		print row[6]
