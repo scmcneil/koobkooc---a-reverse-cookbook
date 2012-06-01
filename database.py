@@ -38,12 +38,8 @@ def Add_to_db():
 			#use the string as the text for the database.
 			f = recipe.lower() + '.txt'
 			g = open(f)
-			line = g.readline()
 			recipe_string = ''
-			while line:
-				recipe_string += line
-				line = g.readline()
-			
+			recipe_string = g.read()
 			cur.execute("insert into recipes values (?,?,?,?,?,?,?)", (recipe, meat, VEGGIES[0], VEGGIES[1], VEGGIES[2], VEGGIES[3], recipe_string))
 		conn.commit()
 
