@@ -22,7 +22,7 @@ def RECIPES():
 	recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies))
 	for x in recipes:
 		print x
-	choose_recipe = raw_input("Which recipe would you like to view?")
+	choose_recipe = raw_input("Which recipe would you like to view? ")
 	database.Print_recipe(choose_recipe)
 
 print ('Welcome to koobkooc---a-reverse-cookbook')
@@ -32,10 +32,11 @@ while keep_going == True:
 	instruction = raw_input('INSTRUCTION: ')
 	if instruction != 'database' and instruction != 'recipes':
 		print 'USAGE: "recipes" or "database"'
-		instruction = raw_input('INSTRUCTION: ')
-	elif instruction == 'database':
+		instruction  = raw_input('INSTRUCTION: ')
+
+	if instruction == 'database':
 		DB()
-	elif instruction == 'recipes':
+	if instruction == 'recipes':
 		RECIPES()
 	go_on = raw_input('Do you want to do something else? (y/n): ')
 	if go_on == 'n':
