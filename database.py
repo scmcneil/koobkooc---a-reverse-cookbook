@@ -16,6 +16,12 @@ def Add_to_db():
 	keep_adding = True
 	while keep_adding == True:
 		recipe = raw_input('Recipe name: ').lower()
+		flag = False
+		for row in cur.execute("select * from recipes"):
+			if row[0] == recipe:
+				flag = True
+				print 'Recipe is already in database'
+
 		meat = raw_input('type of meat: ').lower()
 		num_veggies = raw_input('number of vegetables (up to four): ')
 		VEGGIES = []
@@ -27,19 +33,12 @@ def Add_to_db():
 			for x in range(int(num_veggies), 4):
 				VEGGIES.append('none')
 
-
-		flag = False
-		for row in cur.execute("select * from recipes"):
-			if row[0] == recipe:
-				flag = True
-				print 'Recipe is already in database'
-
 		if flag == False:
 			in_dir = raw_input('Is the recipe file in the current directory and a *.txt file? (y/n)')
 			if in_dir =='y':
 				full_path = recipe + '.txt'
 
-			elif in_dir == 'n'
+			elif in_dir == 'n':
 				file_path = raw_input('Recipe file to acces by path:  ')
 				full_path = os.path.abspath(file_path)
 			
