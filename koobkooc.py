@@ -1,6 +1,7 @@
 # Copyright Sheena C. McNeil
 
 import sys
+import os
 import database
 
 def DB():
@@ -19,11 +20,19 @@ def RECIPES():
 	for x in range(0, int(num_veggies)):
 		veggie = raw_input("veggie: ").lower()
 		VEGGIES.append(veggie)
-	recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies))
-	for x in recipes:
-		print x
-	choose_recipe = raw_input("Which recipe would you like to view? ")
-	database.Print_recipe(choose_recipe)
+
+	stop = False
+	while stop == False:
+		recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies))
+		for x in recipes:
+			print x
+		choose_recipe = raw_input("Which recipe would you like to view? ")
+		database.Print_recipe(choose_recipe)
+		view_other =  raw_input('\n\nWould you like to go back and view a different recipe? (y/n)')
+		if view_other == 'y':
+			os.system('clear')
+		if view_other == 'n':
+			stop = True
 
 print ('Welcome to koobkooc---a-reverse-cookbook')
 print ('OPTIONS: find a recipe or modify the database')
