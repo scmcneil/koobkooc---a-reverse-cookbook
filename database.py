@@ -34,10 +34,9 @@ def Add_to_db():
 				flag = True
 
 		if flag == False:
-			#open the file and read it in to a string.
-			#use the string as the text for the database.
-			f = recipe.lower() + '.txt'
-			g = open(f)
+			file_path = raw_input('Recipe file to acces by path:  ')
+			full_path = os.path.abspath(file_path)
+			g = open(full_path)
 			recipe_string = ''
 			recipe_string = g.read()
 			cur.execute("insert into recipes values (?,?,?,?,?,?,?)", (recipe, meat, VEGGIES[0], VEGGIES[1], VEGGIES[2], VEGGIES[3], recipe_string))
