@@ -35,8 +35,14 @@ def Add_to_db():
 				print 'Recipe is already in database'
 
 		if flag == False:
-			file_path = raw_input('Recipe file to acces by path:  ')
-			full_path = os.path.abspath(file_path)
+			in_dir = raw_input('Is the recipe file in the current directory and a *.txt file? (y/n)')
+			if in_dir =='y':
+				full_path = recipe + '.txt'
+
+			elif in_dir == 'n'
+				file_path = raw_input('Recipe file to acces by path:  ')
+				full_path = os.path.abspath(file_path)
+			
 			g = open(full_path)
 			recipe_string = ''
 			recipe_string = g.read()
