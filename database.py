@@ -15,7 +15,7 @@ except:
 def Add_to_db():
 	keep_adding = True
 	while keep_adding == True:
-		recipe = raw_input('Recipe name: ')
+		recipe = raw_input('Recipe name: ').lower()
 		meat = raw_input('type of meat: ').lower()
 		num_veggies = raw_input('number of vegetables (up to four): ')
 		VEGGIES = []
@@ -32,6 +32,7 @@ def Add_to_db():
 		for row in cur.execute("select * from recipes"):
 			if row[0] == recipe:
 				flag = True
+				print 'Recipe is already in database'
 
 		if flag == False:
 			file_path = raw_input('Recipe file to acces by path:  ')
@@ -49,7 +50,7 @@ def Add_to_db():
 def Delete_from_db():
 	keep_deleting = True
 	while keep_deleting == True:
-		to_be_deleted = raw_input("Recipe name to delete: ")
+		to_be_deleted = raw_input("Recipe name to delete: ").lower()
 		query = "delete from recipes where recipe_name = '%s'" % to_be_deleted
 		cur.execute(query)
 		conn.commit()
@@ -77,10 +78,11 @@ def Find_recipe(MEAT, VEGGIES, NUM):
 				if VEGGIES[y] == row[x]:
 					matches += 1
 		if matches == NUM:
-			qualifying_recipes.append(row[0])
+			qualifying_recipes.append(row[0].title())
 	return qualifying_recipes
 
 def Print_recipe(RECIPE):
+	RECIPE = RECIPE.lower()
 	query = "select * from recipes where recipe_name = '%s'" % RECIPE
 	for row in cur.execute(query):
 		print row[6]

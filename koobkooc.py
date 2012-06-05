@@ -3,16 +3,17 @@
 import sys
 import os
 import database
-
+#--------Database Functions--------#
 def DB():
 	db_instruction = raw_input('DATABASE INSTRUCTION: ')
 	if db_instruction == 'add':
 		database.Add_to_db()
-	if db_instruction == 'delete':
+	elif db_instruction == 'delete':
 		database.Delete_from_db()
 	elif db_instruction == 'print':
 		database.Print_db()
 
+#--------Recipe Functions/Finding--------#
 def RECIPES():
 	meat = raw_input("What type of meat would you like to use? ")
 	num_veggies = raw_input("How many vegetables would you like to use? ")
@@ -33,6 +34,7 @@ def RECIPES():
 			os.system('clear')
 		if view_other == 'n':
 			stop = True
+#----------------------------------------#
 
 print ('Welcome to koobkooc---a-reverse-cookbook')
 print ('OPTIONS: find a recipe or modify the database')
