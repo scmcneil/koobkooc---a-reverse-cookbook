@@ -25,15 +25,21 @@ def RECIPES():
 	stop = False
 	while stop == False:
 		recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies))
-		for x in recipes:
-			print (x)
-		choose_recipe = input("Which recipe would you like to view? ")
-		database.Print_recipe(choose_recipe)
-		view_other =  input('\n\nWould you like to go back and view a different recipe? (y/n)')
-		if view_other == 'y':
-			os.system('clear')
-		if view_other == 'n':
-			stop = True
+		if len(recipes) > 0:
+			for x in recipes:
+				print (x)
+			choose_recipe = input("Which recipe would you like to view? ")
+			database.Print_recipe(choose_recipe)
+			view_other =  input('\n\nWould you like to go back and view a different recipe? (y/n): ')
+			if view_other == 'y':
+				os.system('clear')
+			if view_other == 'n':
+				stop = True
+		elif len(recipes) == 0:
+			print('No recipes match your search')
+			search_again = input('Would you like to try a new search? (y/n): ')
+			if search_again == 'y':
+				RECIPES()
 #----------------------------------------#
 
 print ('Welcome to koobkooc---a-reverse-cookbook')
@@ -41,13 +47,13 @@ print ('OPTIONS: find a recipe or modify the database')
 keep_going = True
 while keep_going == True:
 	instruction = input('INSTRUCTION: ')
-	if instruction != 'database' and instruction != 'recipes':
-		print ('USAGE: "recipes" or "database"')
+	if instruction != 'database' and instruction != 'recipe':
+		print ('USAGE: "recipe" or "database"')
 		instruction  = input('INSTRUCTION: ')
 
 	if instruction == 'database':
 		DB()
-	if instruction == 'recipes':
+	if instruction == 'recipe':
 		RECIPES()
 	go_on = input('Do you want to do something else? (y/n): ')
 	if go_on == 'n':
