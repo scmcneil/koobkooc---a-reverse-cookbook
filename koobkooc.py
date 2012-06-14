@@ -40,22 +40,24 @@ def RECIPES():
 			search_again = input('Would you like to try a new search? (y/n): ')
 			if search_again == 'y':
 				RECIPES()
-#----------------------------------------#
+#---------------Main---------------------#
 
-print ('Welcome to koobkooc---a-reverse-cookbook')
-print ('OPTIONS: find a recipe or modify the database')
-keep_going = True
-while keep_going == True:
-	instruction = input('INSTRUCTION: ')
-	if instruction != 'database' and instruction != 'recipe':
-		print ('USAGE: "recipe" or "database"')
-		instruction  = input('INSTRUCTION: ')
+def main():
+        print ('Welcome to koobkooc---a-reverse-cookbook')
+        print ('OPTIONS: find a recipe or modify the database')
+        keep_going = True
+        while keep_going == True:
+                instruction = input('INSTRUCTION: ')
+                if instruction != 'database' and instruction != 'recipe':
+                        print ('USAGE: "recipe" or "database"')
+                        instruction  = input('INSTRUCTION: ')
+                if instruction == 'database':
+                        DB()
+                if instruction == 'recipe':
+                        RECIPES()
+                go_on = input('Do you want to do something else? (y/n): ')
+                if go_on == 'n':
+                        keep_going = False
 
-	if instruction == 'database':
-		DB()
-	if instruction == 'recipe':
-		RECIPES()
-	go_on = input('Do you want to do something else? (y/n): ')
-	if go_on == 'n':
-		keep_going = False
-
+if __name__ == '__main__':
+        main()
