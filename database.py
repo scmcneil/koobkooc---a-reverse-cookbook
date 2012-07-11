@@ -66,7 +66,7 @@ def Delete_from_db():
 			keep_deleting = False
 
 def Print_db():
-	for row in cur.execute("select * from recipes"):
+	for row in cur.execute("select recipe_name, meat, veggie_one, veggie_two, veggie_three, veggie_four from recipes"):
 		print ('-'*10)
 		print ('Recipe:', row[0])
 		print ('Meat:', row[1])
@@ -89,6 +89,6 @@ def Find_recipe(MEAT, VEGGIES, NUM):
 
 def Print_recipe(RECIPE):
 	RECIPE = RECIPE.lower()
-	query = "select * from recipes where recipe_name = '%s'" % RECIPE
+	query = "select recipe_file from recipes where recipe_name = '%s'" % RECIPE
 	for row in cur.execute(query):
-		print (row[6])
+		print (row[0])
