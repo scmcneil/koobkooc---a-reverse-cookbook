@@ -1,16 +1,16 @@
 import sys, os
 from PyQt4 import QtGui
 
-class Screen4(QtGui.QWizardPage):
-    def __init__(self, paretn=None):
-        super(Screen4, self).__init__()
+class Screen8(QtGui.QWizardPage):
+    def __init__(self, parent=None):
+        super(Screen8, self).__init__()
         self.initUI()
 
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
-        label = QtGui.QLabel('Add a recipe')
+        label = QtGui.QLabel('Edit a recipe')
         name = QtGui.QLabel('Recipe Name')
         meat = QtGui.QLabel('Meat')
         veggie1 = QtGui.QLabel('Veggie 1')
@@ -19,7 +19,7 @@ class Screen4(QtGui.QWizardPage):
         veggie4 = QtGui.QLabel('Veggie 4')
         starch = QtGui.QLabel('Served on')
         
-        nameEdit = QtGui.QLineEdit()
+        nameShow = QtGui.QLabel()
         meatEdit = QtGui.QLineEdit()
         veggie1Edit = QtGui.QLineEdit()
         veggie2Edit = QtGui.QLineEdit()
@@ -34,7 +34,7 @@ class Screen4(QtGui.QWizardPage):
         #grid.addWidget(pic)
         grid.addWidget(label, 1, 0)
         grid.addWidget(name, 2, 0)
-        grid.addWidget(nameEdit, 2, 1)
+        grid.addWidget(nameShow, 2, 1)
         grid.addWidget(meat, 3, 0)
         grid.addWidget(meatEdit, 3, 1)
         grid.addWidget(veggie1, 4, 0)
@@ -61,7 +61,7 @@ if ( __name__ == '__main__' ):
     wizard.resize(720,650)
     wizard.setWindowTitle('koobkooc---a-reverse-cookbook')
     wizard.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
-    wizard.addPage(Screen4(wizard))
+    wizard.addPage(Screen8(wizard))
     wizard.exec_()
     
     # execute the application if we've created it
