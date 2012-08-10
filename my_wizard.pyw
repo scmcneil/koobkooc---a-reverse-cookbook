@@ -8,7 +8,7 @@ class UnderConstruction(QtGui.QWizardPage):
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/under_construction.jpg"))
 
 class Screen1(QtGui.QWizardPage):
-    def __init__(self, paretn=None):
+    def __init__(self, parent=None):
         super(Screen1, self).__init__()
         self.initUI()
 
@@ -24,6 +24,13 @@ class Screen1(QtGui.QWizardPage):
         self.radio2 = QtGui.QRadioButton('&Recipe Lookup', self)
         #self.radio1.setChecked(1)
         self.radio2.move(225, 300)
+
+        self.NextButton.clicked.connect(self.roar)
+    def roar(self):
+        if radio1.isChecked():
+            wizard.addPage(UnderConstruction(self))
+
+        
 
 
 if ( __name__ == '__main__' ):

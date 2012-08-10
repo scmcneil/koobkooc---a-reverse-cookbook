@@ -1,9 +1,9 @@
 import sys, os
 from PyQt4 import QtGui
 
-class Screen15(QtGui.QWizardPage):
+class Screen7(QtGui.QWizardPage):
     def __init__(self, paretn=None):
-        super(Screen15, self).__init__()
+        super(Screen7, self).__init__()
         self.initUI()
 
     def initUI(self):
@@ -30,7 +30,7 @@ if ( __name__ == '__main__' ):
     wizard.resize(720,650)
     wizard.setWindowTitle('koobkooc---a-reverse-cookbook')
     wizard.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
-    wizard.addPage(Screen15(wizard))
+    wizard.addPage(Screen7(wizard))
     wizard.exec_()
     
     # execute the application if we've created it
