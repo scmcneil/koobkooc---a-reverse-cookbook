@@ -1,3 +1,6 @@
+#Copyright Sheena C. McNeil
+
+import database, intermediary
 import sys, os
 from PyQt4 import QtGui
 
@@ -11,6 +14,8 @@ class Screen5(QtGui.QWizardPage):
         openFile = QtGui.QPushButton('Open a File', self)
         openFile.clicked.connect(self.showDialog)
         label = QtGui.QLabel('Type in recipe or read in from file')
+        addButton = QtGui.QPushButton('Add to database')
+        addButton.clicked.connect(self.add_recipe)
         #openFile.resize(openFile.sizeHint())
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
@@ -18,6 +23,7 @@ class Screen5(QtGui.QWizardPage):
         grid.addWidget(label, 2, 0)
         grid.addWidget(self.textEdit, 3, 0, 2, 0)
         grid.addWidget(openFile, 5, 0)
+        grid.addWidget(addButton, 6, 0)
         self.setLayout(grid)
         
     def showDialog(self):
@@ -28,9 +34,21 @@ class Screen5(QtGui.QWizardPage):
             data = f.read()
             self.textEdit.setText(data)
 
+    def add_recipe(self):
+        recipe = self.textEdit.toPlainText()
+        #print(recipe)
+        intermediary.set_recipe(recipe)
+        #intermediary.get_name()
+        #intermediary.send_the_things()
+        database.ADD()
+            
+
 class Screen4(QtGui.QWizardPage):
-    def __init__(self, paretn=None):
+    def __init__(self, parent=None):
         super(Screen4, self).__init__()
+        test = QtGui.QLabel(self)
+        test.setGeometry(0,0,10,225)
+        test.setPixmap(QtGui.QPixmap(os.getcwd() + '/test.jpg'))
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
@@ -49,13 +67,25 @@ class Screen4(QtGui.QWizardPage):
         veggie2Edit = QtGui.QLineEdit()
         veggie3Edit = QtGui.QLineEdit()
         veggie4Edit = QtGui.QLineEdit()
-        starchRadio1 = QtGui.QRadioButton('&Rice', self)
-        starchRadio2 = QtGui.QRadioButton('&Noodles', self)
-        starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
+        self.starchRadio1 = QtGui.QRadioButton('&Rice', self)
+        self.starchRadio2 = QtGui.QRadioButton('&Noodles', self)
+        self.starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
+
+        setButton = QtGui.QPushButton('Set search parameters', self)
+        setButton.clicked.connect(self.set_parameters)
+
+        self.setLabel = QtGui.QLabel(self)
+
+        nameEdit.textChanged[str].connect(self.name_changed)
+        meatEdit.textChanged[str].connect(self.meat_changed)
+        veggie1Edit.textChanged[str].connect(self.veggie1_changed)
+        veggie2Edit.textChanged[str].connect(self.veggie2_changed)
+        veggie3Edit.textChanged[str].connect(self.veggie3_changed)
+        veggie4Edit.textChanged[str].connect(self.veggie4_changed)
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
-        #grid.addWidget(pic)
+        grid.addWidget(test, 0, 0)
         grid.addWidget(label, 1, 0)
         grid.addWidget(name, 2, 0)
         grid.addWidget(nameEdit, 2, 1)
@@ -70,14 +100,43 @@ class Screen4(QtGui.QWizardPage):
         grid.addWidget(veggie4, 7, 0)
         grid.addWidget(veggie4Edit, 7, 1)
         grid.addWidget(starch, 8, 0)
-        grid.addWidget(starchRadio1, 8, 1)
-        grid.addWidget(starchRadio2, 9, 1)
-        grid.addWidget(starchRadio3, 10, 1)
+        grid.addWidget(self.starchRadio1, 8, 1)
+        grid.addWidget(self.starchRadio2, 9, 1)
+        grid.addWidget(self.starchRadio3, 10, 1)
+        grid.addWidget(setButton, 11, 0)
+        grid.addWidget(self.setLabel, 11, 1)
         self.setLayout(grid)
+
+    def name_changed(self, text):
+        intermediary.set_name(text)
+
+    def meat_changed(self, text):
+        intermediary.set_meat(text)
+
+    def veggie1_changed(self, text):
+        intermediary.set_veggie1(text)
+
+    def veggie2_changed(self, text):
+        intermediary.set_veggie2(text)
+
+    def veggie3_changed(self, text):
+        intermediary.set_veggie3(text)
+
+    def veggie4_changed(self, text):
+        intermediary.set_veggie4(text)
+
+    def set_parameters(self):
+        if self.starchRadio1.isChecked() == True:
+            intermediary.set_starch('Rice')
+        elif self.starchRadio2.isChecked():
+            intermediary.set_starch('Noodles')
+        elif self.starchRadio3.isChecked():
+            intermediary.set_starch('Potatoes')
+        self.setLabel.setText('Parameters set!')
 
 
 class Screen3(QtGui.QWizardPage):
-    def __init__(self, paretn=None):
+    def __init__(self, parent=None):
         super(Screen3, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
@@ -99,11 +158,13 @@ if ( __name__ == '__main__' ):
     wizard.resize(720,650)
     wizard.setWindowTitle('koobkooc---a-reverse-cookbook')
     wizard.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
+    wizard.setOption(QtGui.QWizard.NoCancelButton)
     wizard.addPage(Screen3(wizard))
     wizard.addPage(Screen4(wizard))
     wizard.addPage(Screen5(wizard))
     wizard.exec_()
     
     # execute the application if we've created it
+
     if ( app ):
         app.exec_()

@@ -1,5 +1,6 @@
 #Copyright Sheena C. McNeil
 
+import intermediary
 import sys
 import os
 import sqlite3
@@ -12,6 +13,14 @@ try:
 except:
     pass
 	
+def ADD():
+    name = intermediary.get_name()
+    meat = intermediary.get_meat()
+    veggies = intermediary.get_veggies()
+    recipe = intermediary.get_recipe()
+    cur.execute("insert into recipes values (?,?,?,?,?,?,?)", (name, meat, veggies[0], veggies[1], veggies[2], veggies[3], recipe))
+    conn.commit()
+
 def Add_to_db(recipe, meat, VEGGIES, full_path):
     g = open(full_path)
     recipe_string = ''
