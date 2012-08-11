@@ -25,6 +25,9 @@ class Screen8(QtGui.QWizardPage):
         self.initUI()
 
     def initUI(self):
+        test = QtGui.QLabel(self)
+        test.setGeometry(0,0,10,225)
+        test.setPixmap(QtGui.QPixmap(os.getcwd() + '/test.jpg'))
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
@@ -49,7 +52,7 @@ class Screen8(QtGui.QWizardPage):
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
-        #grid.addWidget(pic)
+        grid.addWidget(test, 0, 0)
         grid.addWidget(label, 1, 0)
         grid.addWidget(name, 2, 0)
         grid.addWidget(nameShow, 2, 1)
