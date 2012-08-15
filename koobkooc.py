@@ -27,6 +27,7 @@ def DB():
                     print ('Recipe is already in database')
 
             meat = input('type of meat: ').lower()
+            starch = input('starch: ').lower()
             num_veggies = input('number of vegetables (up to four): ')
             VEGGIES = []
             for x in range(0, int(num_veggies)):
@@ -45,7 +46,7 @@ def DB():
                 file_path = input('Recipe file to acces by path:  ')
                 full_path = os.path.abspath(file_path)
 
-            database.Add_to_db(recipe, meat, VEGGIES, full_path)
+            database.Add_to_db(recipe, meat, VEGGIES, starch, full_path)
             go_on = input('Keep adding? (y/n): ').lower()
             if go_on == 'n':
                 keep_adding = False
@@ -73,8 +74,8 @@ def RECIPES():
     for x in range(0, int(num_veggies)):
         veggie = input("veggie: ").lower()
         VEGGIES.append(veggie)
-
-    recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies))
+    starch = input('starch: ').lower()
+    recipes = database.Find_recipe(meat, VEGGIES, int(num_veggies), starch)
     stop = False
     while stop == False:
         if len(recipes) > 0:
@@ -92,6 +93,8 @@ def RECIPES():
             search_again = input('Would you like to try a new search? (y/n): ')
             if search_again == 'y':
                 RECIPES()
+            elif search_again == 'n':
+                stop = True
                 
 #---------------Main---------------------#
 
