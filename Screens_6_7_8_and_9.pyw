@@ -1,8 +1,9 @@
 import sys, os
+import database, intermediary
 from PyQt4 import QtGui
 
 class Screen9(QtGui.QWizardPage):
-    def __init__(self, paretn=None):
+    def __init__(self, parent=None):
         super(Screen9, self).__init__()
         self.initUI()
 
@@ -40,7 +41,17 @@ class Screen8(QtGui.QWizardPage):
         veggie4 = QtGui.QLabel('Veggie 4')
         starch = QtGui.QLabel('Served on')
         
-        nameShow = QtGui.QLabel()
+        recipe = database.get_name()
+        print (recipe)
+        
+        nameShow = QtGui.QComboBox(self)
+        nameShow.addItem('---select---')
+        all_recipes = database.Browse_db()
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                print(x)
+                nameShow.addItem(x)
+        
         meatEdit = QtGui.QLineEdit()
         veggie1Edit = QtGui.QLineEdit()
         veggie2Edit = QtGui.QLineEdit()
@@ -73,25 +84,41 @@ class Screen8(QtGui.QWizardPage):
         self.setLayout(grid)
 
 class Screen7(QtGui.QWizardPage):
-    def __init__(self, paretn=None):
+    def __init__(self, parent=None):
         super(Screen7, self).__init__()
         self.initUI()
 
     def initUI(self):
+        spacer = QtGui.QLabel(self)
+        spacer.setGeometry(0,0,10,225)
+        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/spacer.jpg'))
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
-        self.recipes = QtGui.QListView()
+        self.recipes = QtGui.QListWidget()
+        all_recipes = database.Browse_db()
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                print(x)
+                item = QtGui.QListWidgetItem(x)
+                self.recipes.addItem(item)
+        self.recipes.clicked.connect(self.listclicked)
+        
         label = QtGui.QLabel('Select a recipe to edit')
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
-        grid.addWidget(pic, 1, 0)
+        grid.addWidget(spacer, 1, 0)
         grid.addWidget(label, 2, 0)
         grid.addWidget(self.recipes, 3, 0, 4, 0)
         self.setLayout(grid)
+        
+    def listclicked(self, item):
+        recipe = self.recipes.currentItem().text()
+        intermediary.set_name(recipe)
+        print(intermediary.get_name())
 
 class Screen6(QtGui.QWizardPage):
-    def __init__(self, paretn=None):
+    def __init__(self, parent=None):
         super(Screen6, self).__init__()
         self.initUI()
 
