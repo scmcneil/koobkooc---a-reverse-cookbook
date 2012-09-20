@@ -4,6 +4,8 @@ import database, intermediary
 import sys, os
 from PyQt4 import QtGui
 
+#This sequence of screen allows the user to add a recipe to the database
+
 class Screen5(QtGui.QWizardPage):
     def __init__(self, parent):
         super(Screen5, self).__init__()
@@ -29,6 +31,7 @@ class Screen5(QtGui.QWizardPage):
         self.setLayout(grid)
         
     def showDialog(self):
+        #Create a pop-up file browser to select a file to open
         cwd = os.getcwd()
         fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', cwd)
         f = open(fname, 'r')
@@ -37,6 +40,7 @@ class Screen5(QtGui.QWizardPage):
             self.textEdit.setText(data)
 
     def add_recipe(self):
+        #add the recipe and parameters to the database
         recipe = self.textEdit.toPlainText()
         print(recipe)
         intermediary.set_recipe(recipe)
@@ -44,6 +48,7 @@ class Screen5(QtGui.QWizardPage):
             
 
 class Screen4(QtGui.QWizardPage):
+    #set the search parameters and name for the dish
     def __init__(self, parent=None):
         super(Screen4, self).__init__()
         spacer = QtGui.QLabel(self)
@@ -136,6 +141,7 @@ class Screen4(QtGui.QWizardPage):
 
 
 class Screen3(QtGui.QWizardPage):
+    #Select the type of dish to add to the database
     def __init__(self, parent=None):
         super(Screen3, self).__init__()
         pic = QtGui.QLabel(self)
