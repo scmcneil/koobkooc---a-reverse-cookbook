@@ -49,6 +49,19 @@ def Browse_db():
         recipes.append(row[0])
     return recipes
 
+def Find_for_edit(recipe_name):
+    recipe_name = recipe_name.lower()
+    query = "select * from recipes where recipe_name = '%s'" % recipe_name
+    for row in cur.execute(query):
+        intermediary.set_name(recipe_name)
+        intermediary.set_meat(row[1])
+        intermediary.set_veggie1(row[2])
+        intermediary.set_veggie2(row[3])
+        intermediary.set_veggie3(row[4])
+        intermediary.set_veggie4(row[5])
+        intermediary.set_starch(row[6])
+        intermediary.set_recipe(row[7])
+
 def Recipe_text(recipe):
     recipe = recipe.lower()
     query = "select recipe_file from recipes where recipe_name = '%s'" % recipe
