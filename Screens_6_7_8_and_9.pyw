@@ -12,14 +12,26 @@ class Screen9(QtGui.QWizardPage):
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
         self.textEdit = QtGui.QTextEdit()
+        fillButton = QtGui.QPushButton('Fill')
+        fillButton.clicked.connect(self.fill)
         label = QtGui.QLabel('Edit recipe text')
-        self.textEdit.setText(intermediary.get_recipe())
+        editButton = QtGui.QPushButton('Commit edits to database')
+        editButton.clicked.connect(self.edit_recipe)
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
-        grid.addWidget(pic, 1, 0)
+        grid.addWidget(pic, 0, 0)
+        grid.addWidget(fillButton)
         grid.addWidget(label, 2, 0)
         grid.addWidget(self.textEdit, 3, 0, 4, 0)
+        grid.addWidget(editButton, 7, 0)
         self.setLayout(grid)
+
+    def edit_recipe(self):
+        #update the recipe and parameters in the database
+
+    def fill(self):
+        recipe_text = intermediary.get_recipe()
+        self.textEdit.insertPlainText(recipe_text)
 
 class Screen8(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -62,6 +74,10 @@ class Screen8(QtGui.QWizardPage):
         self.starchRadio1 = QtGui.QRadioButton('&Rice', self)
         self.starchRadio2 = QtGui.QRadioButton('&Noodles', self)
         self.starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
+
+        setButton = QtGui.QPushButton('Re-set search parameters', self)
+        setButton.clicked.connect(self.set_parameters)
+        self.setLabel = QtGui.QLabel(self)
         
         self.meatEdit.textChanged[str].connect(self.meat_changed)
         self.veggie1Edit.textChanged[str].connect(self.veggie1_changed)
@@ -89,19 +105,34 @@ class Screen8(QtGui.QWizardPage):
         grid.addWidget(self.starchRadio1, 8, 1)
         grid.addWidget(self.starchRadio2, 9, 1)
         grid.addWidget(self.starchRadio3, 10, 1)
+        grid.addWidget(setButton, 11, 0)
+        grid.addWidget(self.setLabel, 11, 1)
         self.setLayout(grid)
 
     def listclicked(self, text):
         #recipe = self.nameShow.currentItem().text()
         print(text)
         database.Find_for_edit(text)
-        self.meatEdit.setText(intermediary.get_meat())
+        if intermediary.get_meat() != 'none':
+            self.meatEdit.setText(intermediary.get_meat())
         VEGGIES = intermediary.get_veggies()
-        self.veggie1Edit.setText(VEGGIES[0])
-        self.veggie2Edit.setText(VEGGIES[1])
-        self.veggie3Edit.setText(VEGGIES[2])
-        self.veggie4Edit.setText(VEGGIES[3])
-        print(intermediary.get_name())
+        if VEGGIES[0] != 'none':
+            self.veggie1Edit.setText(VEGGIES[0])
+        if VEGGIES[1] != 'none':
+            self.veggie2Edit.setText(VEGGIES[1])
+        if VEGGIES[2] != 'none':
+            self.veggie3Edit.setText(VEGGIES[2])
+        if VEGGIES[3] != 'none':
+            self.veggie4Edit.setText(VEGGIES[3])
+        starch = intermediary.get_starch()
+        if starch == 'Rice':
+            self.starchRadio1.setChecked(1)
+        elif starch == 'Noodles':
+            self.starchRadio2.setChecked(1)
+        elif starch == 'Potatoes':
+            self.starchRadio3.setChecked(1)
+        #print(intermediary.get_recipe())
+        #print(intermediary.get_name())
 
     def meat_changed(self, text):
         intermediary.set_meat(text)
@@ -117,7 +148,15 @@ class Screen8(QtGui.QWizardPage):
 
     def veggie4_changed(self, text):
         intermediary.set_veggie4(text)
-        
+
+    def set_parameters(self):
+        if self.starchRadio1.isChecked() == True:
+            intermediary.set_starch('Rice')
+        elif self.starchRadio2.isChecked():
+            intermediary.set_starch('Noodles')
+        elif self.starchRadio3.isChecked():
+            intermediary.set_starch('Potatoes')
+        self.setLabel.setText('Parameters re-set!')
 
 class Screen7(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -180,7 +219,7 @@ if ( __name__ == '__main__' ):
     wizard.resize(720,650)
     wizard.setWindowTitle('koobkooc---a-reverse-cookbook')
     wizard.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
-    wizard.addPage(Screen6(wizard))
+    #wizard.addPage(Screen6(wizard))
     #wizard.addPage(Screen7(wizard))
     wizard.addPage(Screen8(wizard))
     wizard.addPage(Screen9(wizard))
