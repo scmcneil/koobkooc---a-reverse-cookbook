@@ -9,7 +9,7 @@ class Screen11(QtGui.QWizardPage):
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListView()
         label = QtGui.QLabel('Select a recipe to delete')
         grid = QtGui.QGridLayout()
@@ -27,7 +27,7 @@ class Screen10(QtGui.QWizardPage):
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What type of recipe would you like to delete?", self)
         self.label.move(225, 250)
         self.radio1 = QtGui.QRadioButton('&Main Dish', self)
@@ -45,7 +45,7 @@ if ( __name__ == '__main__' ):
     wizard = QtGui.QWizard()
     wizard.resize(720,650)
     wizard.setWindowTitle('koobkooc---a-reverse-cookbook')
-    wizard.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
+    wizard.setWindowIcon(QtGui.QIcon(os.getcwd() + 'koobkooc.jpg'))
     wizard.addPage(Screen10(wizard))
     wizard.addPage(Screen11(wizard))
     wizard.exec_()

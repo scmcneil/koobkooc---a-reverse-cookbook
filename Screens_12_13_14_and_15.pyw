@@ -9,7 +9,7 @@ class Screen15(QtGui.QWizardPage):
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.textView = QtGui.QTextBrowser()
         label = QtGui.QLabel('Edit recipe text')
         grid = QtGui.QGridLayout()
@@ -30,7 +30,7 @@ class Screen14(QtGui.QWizardPage):
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListView()
         label = QtGui.QLabel('Select a recipe to view')
         grid = QtGui.QGridLayout()
@@ -48,10 +48,10 @@ class Screen13(QtGui.QWizardPage):
     def initUI(self):
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
-        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/spacer.jpg'))
+        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         label = QtGui.QLabel('Find a recipe')
         meat = QtGui.QLabel('Meat')
         veggie1 = QtGui.QLabel('Veggie 1')
@@ -102,7 +102,7 @@ class Screen12(QtGui.QWizardPage):
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What type of recipe would you like to look up?", self)
         self.label.move(225, 250)
         self.radio1 = QtGui.QRadioButton('&Main Dish', self)
@@ -120,7 +120,7 @@ if ( __name__ == '__main__' ):
     wizard = QtGui.QWizard()
     wizard.resize(720,650)
     wizard.setWindowTitle('koobkooc---a-reverse-cookbook')
-    wizard.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
+    wizard.setWindowIcon(QtGui.QIcon(os.getcwd() + 'koobkooc.jpg'))
     wizard.addPage(Screen12(wizard))
     wizard.addPage(Screen13(wizard))
     wizard.addPage(Screen14(wizard))

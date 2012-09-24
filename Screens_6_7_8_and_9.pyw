@@ -10,7 +10,7 @@ class Screen9(QtGui.QWizardPage):
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.textEdit = QtGui.QTextEdit()
         fillButton = QtGui.QPushButton('Fill')
         fillButton.clicked.connect(self.fill)
@@ -28,6 +28,7 @@ class Screen9(QtGui.QWizardPage):
 
     def edit_recipe(self):
         #update the recipe and parameters in the database
+        print('roar')
 
     def fill(self):
         recipe_text = intermediary.get_recipe()
@@ -41,10 +42,10 @@ class Screen8(QtGui.QWizardPage):
     def initUI(self):
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
-        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/spacer.jpg'))
+        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         label = QtGui.QLabel('Edit a recipe')
         name = QtGui.QLabel('Recipe Name')
         meat = QtGui.QLabel('Meat')
@@ -166,10 +167,10 @@ class Screen7(QtGui.QWizardPage):
     def initUI(self):
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
-        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/spacer.jpg'))
+        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListWidget()
         all_recipes = database.Browse_db()
         if len(all_recipes) > 0:
@@ -200,7 +201,7 @@ class Screen6(QtGui.QWizardPage):
     def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What type of recipe would you like to edit?", self)
         self.label.move(225, 250)
         self.radio1 = QtGui.QRadioButton('&Main Dish', self)
@@ -218,7 +219,7 @@ if ( __name__ == '__main__' ):
     wizard = QtGui.QWizard()
     wizard.resize(720,650)
     wizard.setWindowTitle('koobkooc---a-reverse-cookbook')
-    wizard.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
+    wizard.setWindowIcon(QtGui.QIcon(os.getcwd() + 'koobkooc.jpg'))
     #wizard.addPage(Screen6(wizard))
     #wizard.addPage(Screen7(wizard))
     wizard.addPage(Screen8(wizard))
