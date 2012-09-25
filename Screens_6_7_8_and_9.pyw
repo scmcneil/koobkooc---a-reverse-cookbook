@@ -20,7 +20,7 @@ class Screen9(QtGui.QWizardPage):
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 0, 0)
-        grid.addWidget(fillButton)
+        grid.addWidget(fillButton, 1, 0)
         grid.addWidget(label, 2, 0)
         grid.addWidget(self.textEdit, 3, 0, 4, 0)
         grid.addWidget(editButton, 7, 0)
@@ -28,9 +28,16 @@ class Screen9(QtGui.QWizardPage):
 
     def edit_recipe(self):
         #update the recipe and parameters in the database
+        recipe_name = intermediary.get_name()
+        recipe = self.textEdit.toPlainText()
+        intermediary.set_recipe(recipe)
+        database.Edit_recipe(recipe_name)
+        print(intermediary.get_name())
         print('roar')
 
     def fill(self):
+        #fills in textEdit with the recipe text from the database
+        self.textEdit.clear()
         recipe_text = intermediary.get_recipe()
         self.textEdit.insertPlainText(recipe_text)
 
@@ -55,16 +62,13 @@ class Screen8(QtGui.QWizardPage):
         veggie4 = QtGui.QLabel('Veggie 4')
         starch = QtGui.QLabel('Served on')
         
-        recipe = database.get_name()
-        print (recipe)
-        
         self.nameShow = QtGui.QComboBox(self)
         self.nameShow.addItem('---select---')
         self.nameShow.activated[str].connect(self.listclicked)
         all_recipes = database.Browse_db()
         if len(all_recipes) > 0:
             for x in all_recipes:
-                print(x)
+                #print(x)
                 self.nameShow.addItem(x)
         
         self.meatEdit = QtGui.QLineEdit()
@@ -112,28 +116,26 @@ class Screen8(QtGui.QWizardPage):
 
     def listclicked(self, text):
         #recipe = self.nameShow.currentItem().text()
-        print(text)
+        #print(text)
         database.Find_for_edit(text)
         if intermediary.get_meat() != 'none':
-            self.meatEdit.setText(intermediary.get_meat())
+            self.meatEdit.setText(intermediary.get_meat().title())
         VEGGIES = intermediary.get_veggies()
         if VEGGIES[0] != 'none':
-            self.veggie1Edit.setText(VEGGIES[0])
+            self.veggie1Edit.setText(VEGGIES[0].title())
         if VEGGIES[1] != 'none':
-            self.veggie2Edit.setText(VEGGIES[1])
+            self.veggie2Edit.setText(VEGGIES[1].title())
         if VEGGIES[2] != 'none':
-            self.veggie3Edit.setText(VEGGIES[2])
+            self.veggie3Edit.setText(VEGGIES[2].title())
         if VEGGIES[3] != 'none':
-            self.veggie4Edit.setText(VEGGIES[3])
-        starch = intermediary.get_starch()
+            self.veggie4Edit.setText(VEGGIES[3].title())
+        starch = intermediary.get_starch().title()
         if starch == 'Rice':
             self.starchRadio1.setChecked(1)
         elif starch == 'Noodles':
             self.starchRadio2.setChecked(1)
         elif starch == 'Potatoes':
             self.starchRadio3.setChecked(1)
-        #print(intermediary.get_recipe())
-        #print(intermediary.get_name())
 
     def meat_changed(self, text):
         intermediary.set_meat(text)
@@ -224,7 +226,7 @@ if ( __name__ == '__main__' ):
     #wizard.addPage(Screen7(wizard))
     wizard.addPage(Screen8(wizard))
     wizard.addPage(Screen9(wizard))
-    wizard.exec_()
+    wizard.show()
     
     # execute the application if we've created it
     if ( app ):

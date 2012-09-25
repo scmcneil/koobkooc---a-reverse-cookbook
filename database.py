@@ -23,12 +23,7 @@ def ADD():
     veggies = intermediary.get_veggies()
     veggies = list(map(str.lower, veggies))
     starch = intermediary.get_starch().lower()
-    #recipe_string = ''
     recipe_string = intermediary.get_recipe()
-    print('\n', recipe_string)
-    #commit_string = "insert into recipes values ('" + name + "', '" + meat + "', '" + veggies[0] + "', '" + veggies[1] + "', '" + veggies[2] + "', '" + veggies[3] + "', '" + starch + "', '" + recipe_string + "')"
-    #cur.execute(commit_string)
-    #cur.execute("insert into recipes values ('" + name + "', '" + meat + "', '" + veggies[0] + "', '" + veggies[1] + "', '" + veggies[2] + "', '" + veggies[3] + "', '" + starch + "', '" + recipe_string + "')")
     cur.execute("insert into recipes values (?,?,?,?,?,?,?,?)", (name, meat, veggies[0], veggies[1], veggies[2], veggies[3], starch, recipe_string))
     conn.commit()
 
@@ -54,14 +49,32 @@ def Find_for_edit(recipe_name):
     recipe_name = recipe_name.lower()
     query = "select * from recipes where recipe_name = '%s'" % recipe_name
     for row in cur.execute(query):
-        intermediary.set_name(recipe_name.title())
-        intermediary.set_meat(row[1].title())
-        intermediary.set_veggie1(row[2].title())
-        intermediary.set_veggie2(row[3].title())
-        intermediary.set_veggie3(row[4].title())
-        intermediary.set_veggie4(row[5].title())
-        intermediary.set_starch(row[6].title())
-        intermediary.set_recipe(row[7].title())
+        intermediary.set_name(recipe_name)
+        intermediary.set_meat(row[1])
+        intermediary.set_veggie1(row[2])
+        intermediary.set_veggie2(row[3])
+        intermediary.set_veggie3(row[4])
+        intermediary.set_veggie4(row[5])
+        intermediary.set_starch(row[6])
+        intermediary.set_recipe(row[7])
+
+def Edit_recipe(recipe):
+    recipe = recipe.lower()
+    meat = intermediary.get_meat().lower()
+    veggies = intermediary.get_veggies()
+    veggies = list(map(str.lower, veggies))
+    starch = intermediary.get_starch().lower()
+    recipe_string = intermediary.get_recipe()
+    update = "update recipes set meat='" + meat
+    update += "', veggie_one='" + veggies[0]
+    update += "', veggie_two='" + veggies[1]
+    update += "', veggie_three='" + veggies[2]
+    update += "', veggie_four='" + veggies[3]
+    update += "', starch='" + starch
+    update += "', recipe_file='" + recipe_string
+    update += "' where recipe_name='" + recipe + "'"
+    cur.execute(update)
+    conn.commit()
 
 def Recipe_text(recipe):
     recipe = recipe.lower()

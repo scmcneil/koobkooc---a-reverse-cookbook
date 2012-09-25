@@ -1,7 +1,7 @@
 # Copyright Sheena C. McNeil
 
 import sys, os
-import database
+import database, intermediary
 from PyQt4 import QtGui
 
 class Browser(QtGui.QWidget):
@@ -34,7 +34,9 @@ class Browser(QtGui.QWidget):
         
     def listclicked(self, item):
         recipe = self.recipes.currentItem().text()
-        recipe_text = database.Recipe_text(recipe)
+        database.Find_for_edit(recipe)
+        #recipe_text = database.Recipe_text(recipe)
+        recipe_text = intermediary.get_recipe()
         self.textBrowser.setText(recipe_text)
             
 def main():
