@@ -12,22 +12,23 @@ try:
     cur.execute("create table if not exists recipes(recipe_name text, meat text, veggie_one text, veggie_two text, veggie_three text, veggie_four text, starch text, recipe_file text)")
 except:
     pass
-	
+
 def get_name():
     name = intermediary.get_name()
 
 
 def ADD():
-    name = intermediary.get_name()
-    meat = intermediary.get_meat()
+    name = intermediary.get_name().lower()
+    meat = intermediary.get_meat().lower()
     veggies = intermediary.get_veggies()
-    starch = intermediary.get_starch()
-    recipe_string = ''
-    recipe_string += intermediary.get_recipe()
-    print(recipe_string)
+    veggies = list(map(str.lower, veggies))
+    starch = intermediary.get_starch().lower()
+    #recipe_string = ''
+    recipe_string = intermediary.get_recipe()
+    print('\n', recipe_string)
     #commit_string = "insert into recipes values ('" + name + "', '" + meat + "', '" + veggies[0] + "', '" + veggies[1] + "', '" + veggies[2] + "', '" + veggies[3] + "', '" + starch + "', '" + recipe_string + "')"
     #cur.execute(commit_string)
-    #cur.exaecute("insert into recipes values ('" + name + "', '" + meat + "', '" + veggies[0] + "', '" + veggies[1] + "', '" + veggies[2] + "', '" + veggies[3] + "', '" + starch + "', '" + recipe_string + "')")
+    #cur.execute("insert into recipes values ('" + name + "', '" + meat + "', '" + veggies[0] + "', '" + veggies[1] + "', '" + veggies[2] + "', '" + veggies[3] + "', '" + starch + "', '" + recipe_string + "')")
     cur.execute("insert into recipes values (?,?,?,?,?,?,?,?)", (name, meat, veggies[0], veggies[1], veggies[2], veggies[3], starch, recipe_string))
     conn.commit()
 
@@ -46,21 +47,21 @@ def Delete_from_db(recipe_name):
 def Browse_db():
     recipes = []
     for row in cur.execute("select recipe_name from recipes"):
-        recipes.append(row[0])
+        recipes.append(row[0].title())
     return recipes
 
 def Find_for_edit(recipe_name):
     recipe_name = recipe_name.lower()
     query = "select * from recipes where recipe_name = '%s'" % recipe_name
     for row in cur.execute(query):
-        intermediary.set_name(recipe_name)
-        intermediary.set_meat(row[1])
-        intermediary.set_veggie1(row[2])
-        intermediary.set_veggie2(row[3])
-        intermediary.set_veggie3(row[4])
-        intermediary.set_veggie4(row[5])
-        intermediary.set_starch(row[6])
-        intermediary.set_recipe(row[7])
+        intermediary.set_name(recipe_name.title())
+        intermediary.set_meat(row[1].title())
+        intermediary.set_veggie1(row[2].title())
+        intermediary.set_veggie2(row[3].title())
+        intermediary.set_veggie3(row[4].title())
+        intermediary.set_veggie4(row[5].title())
+        intermediary.set_starch(row[6].title())
+        intermediary.set_recipe(row[7].title())
 
 def Recipe_text(recipe):
     recipe = recipe.lower()
@@ -70,19 +71,20 @@ def Recipe_text(recipe):
     
 
 def Print_db():
-    for row in cur.execute("select recipe_name, meat, veggie_one, veggie_two, veggie_three, veggie_four, starch from recipes"):
+    for row in cur.execute("select recipe_name, meat, veggie_one, veggie_two, veggie_three, veggie_four, starch, recipe_file from recipes"):
         print ('-'*10)
-        print ('Recipe: ', row[0])
-        print ('Meat: ', row[1])
+        print ('Recipe: ', row[0].title())
+        print ('Meat: ', row[1].title())
         for x in range(2, 6):
             if row[x] != 'none':
-                print ('Veggie', (x-1), ': ', row[x] )
-        print ('Starch: ', row[6])
+                print ('Veggie', (x-1), ': ', row[x].title() )
+        print ('Starch: ', row[6].title())
+        print (row[7])
 
 def Find_recipe(MEAT, VEGGIES, NUM, STARCH):
 	qualifying_recipes = []
 	query = "select * from recipes where meat = '" + MEAT + "' and starch = '" + STARCH + "'"
-	print (query)
+	#print (query)
 	for row in cur.execute(query):
 		matches = 0
 		for x in range(2, 7):

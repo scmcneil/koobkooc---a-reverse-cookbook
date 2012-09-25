@@ -44,6 +44,7 @@ class Screen5(QtGui.QWizardPage):
         recipe = self.textEdit.toPlainText()
         print(recipe)
         intermediary.set_recipe(recipe)
+        print('\n', intermediary.get_recipe())
         database.ADD()
             
 

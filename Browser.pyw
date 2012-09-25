@@ -16,13 +16,12 @@ class Browser(QtGui.QWidget):
         self.setWindowIcon(QtGui.QIcon('koobkooc.jpg'))
         self.col = QtGui.QColor(255,255,255)
         pic = QtGui.QLabel(self)
-        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/koobkooc-01.jpg"))
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.textBrowser = QtGui.QTextBrowser()
         self.recipes = QtGui.QListWidget()
         all_recipes = database.Browse_db()
         if len(all_recipes) > 0:
             for x in all_recipes:
-                print(x)
                 item = QtGui.QListWidgetItem(x)
                 self.recipes.addItem(item)
         self.recipes.clicked.connect(self.listclicked)
@@ -37,9 +36,6 @@ class Browser(QtGui.QWidget):
         recipe = self.recipes.currentItem().text()
         recipe_text = database.Recipe_text(recipe)
         self.textBrowser.setText(recipe_text)
-        print (item)
-        print (self.recipes.currentItem().text())
-        print ('roar')
             
 def main():
     app = QtGui.QApplication(sys.argv)
