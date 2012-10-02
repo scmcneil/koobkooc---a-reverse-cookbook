@@ -11,7 +11,13 @@ class wizard(QtGui.QWizard):
     Set_recipe = 5
     Type_to_edit = 6
     Edit_parameters = 8
-    Edit_recipt = 9
+    Edit_recipe = 9
+    Type_to_delete = 10
+    Select_to_delete = 11
+    Type_to_search = 12
+    Select_parameters = 13
+    Select_recipe = 14
+    View_reicpe = 15
     Construction_screen = 16
     def __init__(self, parent=None):
         super(wizard, self).__init__()
@@ -26,8 +32,14 @@ class wizard(QtGui.QWizard):
         self.setPage(wizard.Set_recipe, Screen5(self))
         self.setPage(wizard.Type_to_edit, Screen6(self))
         self.setPage(wizard.Edit_parameters, Screen8(self))
-        self.setPage(wizard.Edit_recipt, Screen9(self))
-        self.setPage(wizard.Construction_screen, UnderConstruction(self))
+        self.setPage(wizard.Edit_recipe, Screen9(self))
+        self.setPage(wizard.Type_to_delete, Screen10(self))
+        self.setPage(wizard.Select_to_delete, Screen11(self))
+        #self.setPage(wizard.Type_to_search, Screen12(self))
+        #self.setPage(wizard.Select_parameters, Screen13(self))
+        #self.setPage(wizard.Select_recipe, Screen14(self))
+        #self.setPage(wizard.View_reicpe, Screen15(self))
+        #self.setPage(wizard.Construction_screen, UnderConstruction(self))
         self.setStartId(1)
         
 class UnderConstruction(QtGui.QWizardPage):
@@ -85,6 +97,8 @@ class Screen2(QtGui.QWizardPage):
             return wizard.Type_to_add
         elif self.check2.checkState() == 2:
             return wizard.Type_to_edit
+        elif self.check3.checkState() == 2:
+            return wizard.Type_to_delete
         else:
             return wizard.Construction_screen
 
@@ -409,6 +423,42 @@ class Screen9(QtGui.QWizardPage):
         self.textEdit.clear()
         recipe_text = intermediary.get_recipe()
         self.textEdit.insertPlainText(recipe_text)
+
+class Screen10(QtGui.QWizardPage):
+    # This screen is NOT tied into the back end
+    def __init__(self, parent=None):
+        super(Screen10, self).__init__()
+        self.initUI()
+
+    def initUI(self):
+        pic = QtGui.QLabel(self)
+        pic.setGeometry(0,0,700,225)
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
+        self.label = QtGui.QLabel("What type of recipe would you like to delete?", self)
+        self.label.move(225, 250)
+        self.radio1 = QtGui.QRadioButton('&Main Dish', self)
+        self.radio1.move(225, 275)
+        self.radio2 = QtGui.QRadioButton('&Side Dish', self)
+        self.radio2.move(225, 300)
+
+class Screen11(QtGui.QWizardPage):
+    # This screen is NOT tied into the back end
+    def __init__(self, parent=None):
+        super(Screen11, self).__init__()
+        self.initUI()
+
+    def initUI(self):
+        pic = QtGui.QLabel(self)
+        pic.setGeometry(0,0,700,225)
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
+        self.recipes = QtGui.QListView()
+        label = QtGui.QLabel('Select a recipe to delete')
+        grid = QtGui.QGridLayout()
+        grid.setSpacing(10)
+        grid.addWidget(pic, 1, 0)
+        grid.addWidget(label, 2, 0)
+        grid.addWidget(self.recipes, 3, 0, 4, 0)
+        self.setLayout(grid)
         
 
 if ( __name__ == '__main__' ):
