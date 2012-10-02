@@ -24,6 +24,7 @@ class wizard(QtGui.QWizard):
         self.resize(720,650)
         self.setWindowTitle('koobkooc---a-reverse-cookbook')
         self.setWindowIcon(QtGui.QIcon(os.getcwd() + '/images/koobkooc.jpg'))
+        self.setWizardStyle(QtGui.QWizard.ModernStyle)
         #Add the screens to the wizard
         self.setPage(wizard.Open_screen, Screen1(self))
         self.setPage(wizard.DB_function_screen, Screen2(self))
@@ -233,6 +234,14 @@ class Screen5(QtGui.QWizardPage):
         grid.addWidget(openFile, 5, 0)
         grid.addWidget(addButton, 6, 0)
         self.setLayout(grid)
+        self.nextId
+
+    def nextId(self):
+        #print(Screen2.QtGui.QWizard.VisitedPages())
+        #return wizard.DB_function_screen
+        
+        #Makes the 'Final' button appear
+        return -1
     
     def showDialog(self):
         #Create a pop-up file browser to select a file to open
@@ -242,6 +251,7 @@ class Screen5(QtGui.QWizardPage):
         with f:        
             data = f.read()
             self.textEdit.setText(data)
+        self.nextId
 
     def add_recipe(self):
         #add the recipe and parameters to the database
@@ -249,6 +259,7 @@ class Screen5(QtGui.QWizardPage):
         print(recipe)
         intermediary.set_recipe(recipe)
         print('\n', intermediary.get_recipe())
+        #self.nextId
         database.ADD()
 
 class Screen6(QtGui.QWizardPage):
@@ -410,6 +421,11 @@ class Screen9(QtGui.QWizardPage):
         grid.addWidget(self.textEdit, 3, 0, 4, 0)
         grid.addWidget(editButton, 7, 0)
         self.setLayout(grid)
+        self.nextId()
+
+    def nextId(self):
+        #Makes the 'Final' button appear
+        return -1
 
     def edit_recipe(self):
         #update the recipe and parameters in the database
@@ -461,8 +477,14 @@ class Screen11(QtGui.QWizardPage):
         grid.addWidget(label, 2, 0)
         grid.addWidget(self.recipes, 3, 0, 4, 0)
         self.setLayout(grid)
+        self.nextId()
+
+    def nextId(self):
+        #Makes the 'Final' button appear
+        return -1
 
 class Screen12(QtGui.QWizardPage):
+    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen12, self).__init__()
         self.initUI()
@@ -479,6 +501,7 @@ class Screen12(QtGui.QWizardPage):
         self.radio2.move(225, 300)
 
 class Screen13(QtGui.QWizardPage):
+    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen13, self).__init__()
         self.initUI()
@@ -533,6 +556,7 @@ class Screen13(QtGui.QWizardPage):
         self.setLayout(grid)
 
 class Screen14(QtGui.QWizardPage):
+    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen14, self).__init__()
         self.initUI()
@@ -551,6 +575,7 @@ class Screen14(QtGui.QWizardPage):
         self.setLayout(grid)
 
 class Screen15(QtGui.QWizardPage):
+    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen15, self).__init__()
         self.initUI()
@@ -570,6 +595,11 @@ class Screen15(QtGui.QWizardPage):
 
         roar = label.text()
         self.textView.setText(roar)
+        self.nextId()
+
+    def nextId(self):
+        #Makes the 'Final' button appear
+        return -1
         
 
 if ( __name__ == '__main__' ):
