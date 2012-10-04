@@ -61,16 +61,24 @@ class Screen1(QtGui.QWizardPage):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
-        self.check1 = QtGui.QCheckBox('&Database', self)
+        label = QtGui.QLabel("What action would you like to take?", self)
+        label.move(225, 250)
+        #Checkboxes for control
+        #self.check1 = QtGui.QCheckBox('&Database', self)
+        self.check1 = QtGui.QRadioButton('&Database', self)
         self.check1.move(225, 275)
-        self.check1.stateChanged.connect(self.nextId)
-        self.check2 = QtGui.QCheckBox('&Recipe Lookup', self)
+        #self.check1.stateChanged.connect(self.nextId)
+        #self.check2 = QtGui.QCheckBox('&Recipe Lookup', self)
+        self.check2 = QtGui.QRadioButton('&Recipe Lookup', self)
         self.check2.move(225, 300)
-        self.check2.stateChanged.connect(self.nextId)
+        #self.check2.stateChanged.connect(self.nextId)
+        self.nextId()
     def nextId(self):
-        if self.check1.checkState() == 2:
+        if self.check1.isChecked() == True:
+        #if self.check1.checkState() == 2:
             return wizard.DB_function_screen
-        elif self.check2.checkState() == 2:
+        elif self.check2.isChecked() == True:
+        #elif self.check2.checkState() == 2:
             return wizard.Type_to_search
         else:
             return wizard.Construction_screen
@@ -86,21 +94,29 @@ class Screen2(QtGui.QWizardPage):
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What database function would you like to perform?", self)
         self.label.move(225, 250)
-        self.check1 = QtGui.QCheckBox('&Add a Recipe', self)
+        #Checkboxes for control
+        #self.check1 = QtGui.QCheckBox('&Add a Recipe', self)
+        self.check1 = QtGui.QRadioButton('&Add a Recipe', self)
         self.check1.move(225, 275)
-        self.check1.stateChanged.connect(self.nextId)
-        self.check2 = QtGui.QCheckBox('&Edit a Recipe', self)
+        #self.check1.stateChanged.connect(self.nextId)
+        #self.check2 = QtGui.QCheckBox('&Edit a Recipe', self)
+        self.check2 = QtGui.QRadioButton('&Edit a Recipe', self)
         self.check2.move(225, 300)
-        self.check2.stateChanged.connect(self.nextId)
-        self.check3 = QtGui.QCheckBox('&Delete a Recipe', self)
+        #self.check2.stateChanged.connect(self.nextId)
+        #self.check3 = QtGui.QCheckBox('&Delete a Recipe', self)
+        self.check3 = QtGui.QRadioButton('&Delete a Recipe', self)
         self.check3.move(225, 325)
-        self.check3.stateChanged.connect(self.nextId)
+        #self.check3.stateChanged.connect(self.nextId)
     def nextId(self):
-        if self.check1.checkState() == 2:
+        #Determine which screen to go to next
+        if self.check1.isChecked() == True:
+        #if self.check1.checkState() == 2:
             return wizard.Type_to_add
-        elif self.check2.checkState() == 2:
+        elif self.check2.isChecked() == True:
+        #elif self.check2.checkState() == 2:
             return wizard.Type_to_edit
-        elif self.check3.checkState() == 2:
+        elif self.check3.isChecked() == True:
+        #elif self.check3.checkState() == 2:
             return wizard.Type_to_delete
         else:
             return wizard.Construction_screen
@@ -118,6 +134,16 @@ class Screen3(QtGui.QWizardPage):
         self.radio1.move(225, 275)
         self.radio2 = QtGui.QRadioButton('&Side Dish', self)
         self.radio2.move(225, 300)
+
+    def nextId(self):
+        #Determine which screen to go to next
+        if self.radio1.isChecked() == True:
+            return wizard.Set_parameters
+        #Side dishes not supported yet, so redirect to construction screen
+        elif self.radio2.isChecked() == True:
+            return wizard.Construction_screen
+        else:
+            return wizard.Construction_screen
 
 class Screen4(QtGui.QWizardPage):
     #set the search parameters and name for the dish
@@ -183,7 +209,8 @@ class Screen4(QtGui.QWizardPage):
         grid.addWidget(setButton, 11, 0)
         grid.addWidget(self.setLabel, 11, 1)
         self.setLayout(grid)
-
+        
+    #Take the input from the line-edits and sets it in the intermediary class
     def name_changed(self, text):
         intermediary.set_name(text)
 
@@ -277,6 +304,16 @@ class Screen6(QtGui.QWizardPage):
         self.radio1.move(225, 275)
         self.radio2 = QtGui.QRadioButton('&Side Dish', self)
         self.radio2.move(225, 300)
+
+    def nextId(self):
+        #Determine which screen to go to next
+        if self.radio1.isChecked() == True:
+            return wizard.Set_parameters
+        #Side dishes not supported yet, so redirect to construction screen
+        elif self.radio2.isChecked() == True:
+            return wizard.Construction_screen
+        else:
+            return wizard.Construction_screen
 
 class Screen8(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -459,6 +496,16 @@ class Screen10(QtGui.QWizardPage):
         self.radio2 = QtGui.QRadioButton('&Side Dish', self)
         self.radio2.move(225, 300)
 
+    def nextId(self):
+        #Determine which screen to go to next
+        if self.radio1.isChecked() == True:
+            return wizard.Set_parameters
+        #Side dishes not supported yet, so redirect to construction screen
+        elif self.radio2.isChecked() == True:
+            return wizard.Construction_screen
+        else:
+            return wizard.Construction_screen
+
 class Screen11(QtGui.QWizardPage):
     # This screen is NOT tied into the back end
     def __init__(self, parent=None):
@@ -499,6 +546,16 @@ class Screen12(QtGui.QWizardPage):
         self.radio1.move(225, 275)
         self.radio2 = QtGui.QRadioButton('&Side Dish', self)
         self.radio2.move(225, 300)
+
+    def nextId(self):
+        #Determine which screen to go to next
+        if self.radio1.isChecked() == True:
+            return wizard.Set_parameters
+        #Side dishes not supported yet, so redirect to construction screen
+        elif self.radio2.isChecked() == True:
+            return wizard.Construction_screen
+        else:
+            return wizard.Construction_screen
 
 class Screen13(QtGui.QWizardPage):
     # This screen is NOT tied into the back end
@@ -585,16 +642,16 @@ class Screen15(QtGui.QWizardPage):
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.textView = QtGui.QTextBrowser()
-        label = QtGui.QLabel('Edit recipe text')
+        #label = QtGui.QLabel('Edit recipe text')
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 1, 0)
-        grid.addWidget(label, 2, 0)
-        grid.addWidget(self.textView, 3, 0, 4, 0)
+        #grid.addWidget(label, 2, 0)
+        grid.addWidget(self.textView, 3, 0, 8, 0)
         self.setLayout(grid)
 
-        roar = label.text()
-        self.textView.setText(roar)
+        #roar = label.text()
+        #self.textView.setText(roar)
         self.nextId()
 
     def nextId(self):
