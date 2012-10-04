@@ -38,6 +38,7 @@ def Delete_from_db(recipe_name):
     query = "delete from recipes where recipe_name = '%s'" % recipe_name
     cur.execute(query)
     conn.commit()
+    print('roar')
 
 def Browse_db():
     recipes = []

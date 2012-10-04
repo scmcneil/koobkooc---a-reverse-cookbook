@@ -499,7 +499,7 @@ class Screen10(QtGui.QWizardPage):
     def nextId(self):
         #Determine which screen to go to next
         if self.radio1.isChecked() == True:
-            return wizard.Set_parameters
+            return wizard.Select_to_delete
         #Side dishes not supported yet, so redirect to construction screen
         elif self.radio2.isChecked() == True:
             return wizard.Construction_screen
@@ -516,19 +516,38 @@ class Screen11(QtGui.QWizardPage):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
-        self.recipes = QtGui.QListView()
+        self.recipes = QtGui.QListWidget()
+        all_recipes = database.Browse_db()
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                item = QtGui.QListWidgetItem(x)
+                self.recipes.addItem(item)
+        self.recipes.clicked.connect(self.listclicked)
         label = QtGui.QLabel('Select a recipe to delete')
+        deleteButton = QtGui.QPushButton('&Delete')
+        deleteButton.clicked.connect(self.delete_recipe)
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 1, 0)
         grid.addWidget(label, 2, 0)
         grid.addWidget(self.recipes, 3, 0, 4, 0)
+        grid.addWidget(deleteButton, 7, 0)
         self.setLayout(grid)
         self.nextId()
 
     def nextId(self):
         #Makes the 'Final' button appear
         return -1
+
+    def listclicked(self, item):
+        recipe = self.recipes.currentItem().text().lower()
+        intermediary.set_name(recipe)
+
+    def delete_recipe(self):
+        recipe = intermediary.get_name()
+        database.Delete_from_db(recipe)
+        print(recipe)
+        
 
 class Screen12(QtGui.QWizardPage):
     # This screen is NOT tied into the back end

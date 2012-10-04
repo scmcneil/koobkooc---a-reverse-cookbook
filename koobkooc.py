@@ -56,8 +56,8 @@ def DB():
         while keep_deleting == True:
             to_be_deleted = input("Recipe name to delete: ").lower()
             database.Delete_from_db(to_be_deleted)
-            cur.execute(query)
-            conn.commit()
+            #cur.execute(query)
+            #conn.commit()
     
             go_on = input('Keep deleting? (y/n): ')
             if go_on == 'n':
