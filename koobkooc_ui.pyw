@@ -546,7 +546,15 @@ class Screen11(QtGui.QWizardPage):
     def delete_recipe(self):
         recipe = intermediary.get_name()
         database.Delete_from_db(recipe)
-        print(recipe)
+
+        #reset the list of recipes
+        self.recipes.clear()
+        all_recipes = database.Browse_db()
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                item = QtGui.QListWidgetItem(x)
+                self.recipes.addItem(item)
+        
         
 
 class Screen12(QtGui.QWizardPage):
