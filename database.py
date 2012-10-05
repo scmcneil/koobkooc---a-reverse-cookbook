@@ -59,6 +59,21 @@ def Find_for_edit(recipe_name):
         intermediary.set_starch(row[6])
         intermediary.set_recipe(row[7])
 
+def Find_veggies():
+    query1 = "select veggie_one, veggie_two, veggie_three, veggie_four from recipes"
+    VEGGIES = set()
+    for row in cur.execute(query1):
+        VEGGIES.add(row[0])
+    return VEGGIES
+
+def Find_meat():
+    query1 = "select meat from recipes"
+    MEAT = set()
+    for row in cur.execute(query1):
+        MEAT.add(row[0])
+    return MEAT
+    
+
 def Edit_recipe(recipe):
     recipe = recipe.lower()
     meat = intermediary.get_meat().lower()

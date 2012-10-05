@@ -63,22 +63,16 @@ class Screen1(QtGui.QWizardPage):
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         label = QtGui.QLabel("What action would you like to take?", self)
         label.move(225, 250)
-        #Checkboxes for control
-        #self.check1 = QtGui.QCheckBox('&Database', self)
+        #RadioButtons for control
         self.check1 = QtGui.QRadioButton('&Database', self)
         self.check1.move(225, 275)
-        #self.check1.stateChanged.connect(self.nextId)
-        #self.check2 = QtGui.QCheckBox('&Recipe Lookup', self)
         self.check2 = QtGui.QRadioButton('&Recipe Lookup', self)
         self.check2.move(225, 300)
-        #self.check2.stateChanged.connect(self.nextId)
         self.nextId()
     def nextId(self):
         if self.check1.isChecked() == True:
-        #if self.check1.checkState() == 2:
             return wizard.DB_function_screen
         elif self.check2.isChecked() == True:
-        #elif self.check2.checkState() == 2:
             return wizard.Type_to_search
         else:
             return wizard.Construction_screen
@@ -94,29 +88,20 @@ class Screen2(QtGui.QWizardPage):
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What database function would you like to perform?", self)
         self.label.move(225, 250)
-        #Checkboxes for control
-        #self.check1 = QtGui.QCheckBox('&Add a Recipe', self)
+        #RadioButtons for control
         self.check1 = QtGui.QRadioButton('&Add a Recipe', self)
         self.check1.move(225, 275)
-        #self.check1.stateChanged.connect(self.nextId)
-        #self.check2 = QtGui.QCheckBox('&Edit a Recipe', self)
         self.check2 = QtGui.QRadioButton('&Edit a Recipe', self)
         self.check2.move(225, 300)
-        #self.check2.stateChanged.connect(self.nextId)
-        #self.check3 = QtGui.QCheckBox('&Delete a Recipe', self)
         self.check3 = QtGui.QRadioButton('&Delete a Recipe', self)
         self.check3.move(225, 325)
-        #self.check3.stateChanged.connect(self.nextId)
     def nextId(self):
         #Determine which screen to go to next
         if self.check1.isChecked() == True:
-        #if self.check1.checkState() == 2:
             return wizard.Type_to_add
         elif self.check2.isChecked() == True:
-        #elif self.check2.checkState() == 2:
             return wizard.Type_to_edit
         elif self.check3.isChecked() == True:
-        #elif self.check3.checkState() == 2:
             return wizard.Type_to_delete
         else:
             return wizard.Construction_screen
@@ -173,10 +158,8 @@ class Screen4(QtGui.QWizardPage):
         self.starchRadio1 = QtGui.QRadioButton('&Rice', self)
         self.starchRadio2 = QtGui.QRadioButton('&Noodles', self)
         self.starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
-
         setButton = QtGui.QPushButton('Set search parameters', self)
         setButton.clicked.connect(self.set_parameters)
-
         self.setLabel = QtGui.QLabel(self)
 
         nameEdit.textChanged[str].connect(self.name_changed)
@@ -264,9 +247,6 @@ class Screen5(QtGui.QWizardPage):
         self.nextId
 
     def nextId(self):
-        #print(Screen2.QtGui.QWizard.VisitedPages())
-        #return wizard.DB_function_screen
-        
         #Makes the 'Final' button appear
         return -1
     
@@ -286,7 +266,6 @@ class Screen5(QtGui.QWizardPage):
         print(recipe)
         intermediary.set_recipe(recipe)
         print('\n', intermediary.get_recipe())
-        #self.nextId
         database.ADD()
 
 class Screen6(QtGui.QWizardPage):
@@ -342,7 +321,6 @@ class Screen8(QtGui.QWizardPage):
         all_recipes = database.Browse_db()
         if len(all_recipes) > 0:
             for x in all_recipes:
-                #print(x)
                 self.nameShow.addItem(x)
         
         self.meatEdit = QtGui.QLineEdit()
@@ -389,8 +367,6 @@ class Screen8(QtGui.QWizardPage):
         self.setLayout(grid)
 
     def listclicked(self, text):
-        #recipe = self.nameShow.currentItem().text()
-        #print(text)
         database.Find_for_edit(text)
         if intermediary.get_meat() != 'none':
             self.meatEdit.setText(intermediary.get_meat().title())
@@ -480,7 +456,6 @@ class Screen9(QtGui.QWizardPage):
         self.textEdit.insertPlainText(recipe_text)
 
 class Screen10(QtGui.QWizardPage):
-    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen10, self).__init__()
         self.initUI()
@@ -507,7 +482,6 @@ class Screen10(QtGui.QWizardPage):
             return wizard.Construction_screen
 
 class Screen11(QtGui.QWizardPage):
-    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen11, self).__init__()
         self.initUI()
@@ -540,6 +514,7 @@ class Screen11(QtGui.QWizardPage):
         return -1
 
     def listclicked(self, item):
+        #Get the name of the recipe to be deleted
         recipe = self.recipes.currentItem().text().lower()
         intermediary.set_name(recipe)
 
@@ -558,7 +533,6 @@ class Screen11(QtGui.QWizardPage):
         
 
 class Screen12(QtGui.QWizardPage):
-    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen12, self).__init__()
         self.initUI()
@@ -577,7 +551,7 @@ class Screen12(QtGui.QWizardPage):
     def nextId(self):
         #Determine which screen to go to next
         if self.radio1.isChecked() == True:
-            return wizard.Set_parameters
+            return wizard.Select_parameters
         #Side dishes not supported yet, so redirect to construction screen
         elif self.radio2.isChecked() == True:
             return wizard.Construction_screen
@@ -605,16 +579,26 @@ class Screen13(QtGui.QWizardPage):
         veggie4 = QtGui.QLabel('Veggie 4')
         starch = QtGui.QLabel('Served on')
 
-        meatEdit = QtGui.QComboBox(self)
-        meatEdit.addItem('---select---')
-        veggie1Edit = QtGui.QComboBox(self)
-        veggie1Edit.addItem('---select---')
-        veggie2Edit = QtGui.QComboBox(self)
-        veggie2Edit.addItem('---select---')
-        veggie3Edit = QtGui.QComboBox(self)
-        veggie3Edit.addItem('---select---')
-        veggie4Edit = QtGui.QComboBox(self)
-        veggie4Edit.addItem('---select---')
+        meatSelect = QtGui.QComboBox(self)
+        meatSelect.addItem('---select---')
+        veggie1Select = QtGui.QComboBox(self)
+        veggie1Select.addItem('---select---')
+        veggie2Select = QtGui.QComboBox(self)
+        veggie2Select.addItem('---select---')
+        veggie3Select = QtGui.QComboBox(self)
+        veggie3Select.addItem('---select---')
+        veggie4Select = QtGui.QComboBox(self)
+        veggie4Select.addItem('---select---')
+        VEGGIES = database.Find_veggies()
+        for x in VEGGIES:
+            veggie1Select.addItem(x)
+            veggie2Select.addItem(x)
+            veggie3Select.addItem(x)
+            veggie4Select.addItem(x)
+        MEAT = database.Find_meat()
+        for x in MEAT:
+            meatSelect.addItem(x)
+            
         starchRadio1 = QtGui.QRadioButton('&Rice', self)
         starchRadio2 = QtGui.QRadioButton('&Noodles', self)
         starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
@@ -624,15 +608,15 @@ class Screen13(QtGui.QWizardPage):
         grid.addWidget(spacer, 0, 0)
         grid.addWidget(label, 1, 0)
         grid.addWidget(meat, 3, 0)
-        grid.addWidget(meatEdit, 3, 1)
+        grid.addWidget(meatSelect, 3, 1)
         grid.addWidget(veggie1, 4, 0)
-        grid.addWidget(veggie1Edit, 4, 1)
+        grid.addWidget(veggie1Select, 4, 1)
         grid.addWidget(veggie2, 5, 0)
-        grid.addWidget(veggie2Edit, 5, 1)
+        grid.addWidget(veggie2Select, 5, 1)
         grid.addWidget(veggie3, 6, 0)
-        grid.addWidget(veggie3Edit, 6, 1)
+        grid.addWidget(veggie3Select, 6, 1)
         grid.addWidget(veggie4, 7, 0)
-        grid.addWidget(veggie4Edit, 7, 1)
+        grid.addWidget(veggie4Select, 7, 1)
         grid.addWidget(starch, 8, 0)
         grid.addWidget(starchRadio1, 8, 1)
         grid.addWidget(starchRadio2, 9, 1)
