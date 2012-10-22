@@ -63,14 +63,16 @@ def Find_veggies():
     query1 = "select veggie_one, veggie_two, veggie_three, veggie_four from recipes"
     VEGGIES = set()
     for row in cur.execute(query1):
-        VEGGIES.add(row[0])
+        if row[0] != 'none':
+            VEGGIES.add(row[0])
     return VEGGIES
 
 def Find_meat():
     query1 = "select meat from recipes"
     MEAT = set()
     for row in cur.execute(query1):
-        MEAT.add(row[0])
+        if row[0] != 'none':
+            MEAT.add(row[0])
     return MEAT
     
 

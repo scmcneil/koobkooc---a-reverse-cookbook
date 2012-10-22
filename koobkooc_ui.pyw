@@ -559,7 +559,6 @@ class Screen12(QtGui.QWizardPage):
             return wizard.Construction_screen
 
 class Screen13(QtGui.QWizardPage):
-    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen13, self).__init__()
         self.initUI()
@@ -653,16 +652,11 @@ class Screen15(QtGui.QWizardPage):
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.textView = QtGui.QTextBrowser()
-        #label = QtGui.QLabel('Edit recipe text')
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 1, 0)
-        #grid.addWidget(label, 2, 0)
         grid.addWidget(self.textView, 3, 0, 8, 0)
         self.setLayout(grid)
-
-        #roar = label.text()
-        #self.textView.setText(roar)
         self.nextId()
 
     def nextId(self):
