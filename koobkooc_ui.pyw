@@ -630,15 +630,20 @@ class Screen13(QtGui.QWizardPage):
         self.nextId()
 
     def meatSelected(self, text):
-        intermediary.set_meat(text) 
+        if text != '---select---':
+            intermediary.set_meat(text) 
     def veggie1Selected(self, text):
-        intermediary.set_veggie1(text) 
+        if text != '---select---':
+            intermediary.set_veggie1(text) 
     def veggie2Selected(self, text):
-        intermediary.set_veggie2(text) 
+        if text != '---select---':
+            intermediary.set_veggie2(text) 
     def veggie3Selected(self, text):
-        intermediary.set_veggie3(text) 
+        if text != '---select---':
+            intermediary.set_veggie3(text) 
     def veggie4Selected(self, text):
-        intermediary.set_veggie4(text)
+        if text != '---select---':
+            intermediary.set_veggie4(text)
 
     def nextId(self):
         if self.starchRadio1.isChecked() == True:
@@ -660,6 +665,7 @@ class Screen14(QtGui.QWizardPage):
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListWidget()
+        #self.recipes.clicked.connect(self.listclicked)
         label = QtGui.QLabel('Select a recipe to view')
         self.searchButton = QtGui.QPushButton('Run Search', self)
         self.searchButton.clicked.connect(self.search)
@@ -683,9 +689,14 @@ class Screen14(QtGui.QWizardPage):
             for x in RECIPES:
                 item = QtGui.QListWidgetItem(x)
                 self.recipes.addItem(item)
+        self.recipes.clicked.connect(self.listclicked)
+
+    def listclicked(self, item):
+        recipe = str(self.recipes.currentItem().text())
+        #recipe_text = database.Recipe_text(recipe)
+        database.Find_for_edit(recipe)
 
 class Screen15(QtGui.QWizardPage):
-    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen15, self).__init__()
         self.initUI()
@@ -695,12 +706,21 @@ class Screen15(QtGui.QWizardPage):
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.textView = QtGui.QTextBrowser()
+        fillButton = QtGui.QPushButton('Fill', self)
+        fillButton.move(10, 210)
+        fillButton.clicked.connect(self.fill)
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 1, 0)
         grid.addWidget(self.textView, 3, 0, 8, 0)
         self.setLayout(grid)
         self.nextId()
+
+    def fill(self):
+        #fills in textEdit with the recipe text from the database
+        self.textView.clear()
+        recipe_text = intermediary.get_recipe()
+        self.textView.insertPlainText(recipe_text)
 
     def nextId(self):
         #Makes the 'Final' button appear
