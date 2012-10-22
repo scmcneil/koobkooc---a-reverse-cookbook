@@ -287,7 +287,7 @@ class Screen6(QtGui.QWizardPage):
     def nextId(self):
         #Determine which screen to go to next
         if self.radio1.isChecked() == True:
-            return wizard.Set_parameters
+            return wizard.Edit_parameters
         #Side dishes not supported yet, so redirect to construction screen
         elif self.radio2.isChecked() == True:
             return wizard.Construction_screen
@@ -579,14 +579,19 @@ class Screen13(QtGui.QWizardPage):
         starch = QtGui.QLabel('Served on')
 
         meatSelect = QtGui.QComboBox(self)
+        meatSelect.activated[str].connect(self.meatSelected)
         meatSelect.addItem('---select---')
         veggie1Select = QtGui.QComboBox(self)
+        veggie1Select.activated[str].connect(self.veggie1Selected)
         veggie1Select.addItem('---select---')
         veggie2Select = QtGui.QComboBox(self)
+        veggie2Select.activated[str].connect(self.veggie2Selected)
         veggie2Select.addItem('---select---')
         veggie3Select = QtGui.QComboBox(self)
+        veggie3Select.activated[str].connect(self.veggie3Selected)
         veggie3Select.addItem('---select---')
         veggie4Select = QtGui.QComboBox(self)
+        veggie4Select.activated[str].connect(self.veggie4Selected)
         veggie4Select.addItem('---select---')
         VEGGIES = database.Find_veggies()
         for x in VEGGIES:
@@ -598,9 +603,9 @@ class Screen13(QtGui.QWizardPage):
         for x in MEAT:
             meatSelect.addItem(x)
             
-        starchRadio1 = QtGui.QRadioButton('&Rice', self)
-        starchRadio2 = QtGui.QRadioButton('&Noodles', self)
-        starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
+        self.starchRadio1 = QtGui.QRadioButton('&Rice', self)
+        self.starchRadio2 = QtGui.QRadioButton('&Noodles', self)
+        self.starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
 
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
@@ -617,13 +622,35 @@ class Screen13(QtGui.QWizardPage):
         grid.addWidget(veggie4, 7, 0)
         grid.addWidget(veggie4Select, 7, 1)
         grid.addWidget(starch, 8, 0)
-        grid.addWidget(starchRadio1, 8, 1)
-        grid.addWidget(starchRadio2, 9, 1)
-        grid.addWidget(starchRadio3, 10, 1)
+        grid.addWidget(self.starchRadio1, 8, 1)
+        grid.addWidget(self.starchRadio2, 9, 1)
+        grid.addWidget(self.starchRadio3, 10, 1)
         self.setLayout(grid)
 
+        self.nextId()
+
+    def meatSelected(self, text):
+        intermediary.set_meat(text) 
+    def veggie1Selected(self, text):
+        intermediary.set_veggie1(text) 
+    def veggie2Selected(self, text):
+        intermediary.set_veggie2(text) 
+    def veggie3Selected(self, text):
+        intermediary.set_veggie3(text) 
+    def veggie4Selected(self, text):
+        intermediary.set_veggie4(text)
+
+    def nextId(self):
+        if self.starchRadio1.isChecked() == True:
+            intermediary.set_starch('rice')
+        elif self.starchRadio2.isChecked() == True:
+            intermediary.set_starch('noodles')
+        elif self.starchRadio3.isChecked() == True:
+            intermediary.set_starch('potatoes')
+        return wizard.Select_recipe
+
+
 class Screen14(QtGui.QWizardPage):
-    # This screen is NOT tied into the back end
     def __init__(self, parent=None):
         super(Screen14, self).__init__()
         self.initUI()
@@ -632,14 +659,30 @@ class Screen14(QtGui.QWizardPage):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
-        self.recipes = QtGui.QListView()
+        self.recipes = QtGui.QListWidget()
         label = QtGui.QLabel('Select a recipe to view')
+        self.searchButton = QtGui.QPushButton('Run Search', self)
+        self.searchButton.clicked.connect(self.search)
+        self.searchButton.move(155, 230)
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 1, 0)
         grid.addWidget(label, 2, 0)
         grid.addWidget(self.recipes, 3, 0, 4, 0)
         self.setLayout(grid)
+
+    def search(self):
+        MEAT = intermediary.get_meat()
+        VEGGIES = intermediary.get_veggies_for_search()
+        NUM = len(VEGGIES)
+        STARCH = intermediary.get_starch()
+        RECIPES = database.Find_recipe(MEAT, VEGGIES, NUM, STARCH)
+        print(VEGGIES)
+        print(RECIPES)
+        if len(RECIPES) > 0:
+            for x in RECIPES:
+                item = QtGui.QListWidgetItem(x)
+                self.recipes.addItem(item)
 
 class Screen15(QtGui.QWizardPage):
     # This screen is NOT tied into the back end

@@ -18,11 +18,11 @@ def get_name():
 
 
 def ADD():
-    name = intermediary.get_name().lower()
-    meat = intermediary.get_meat().lower()
+    name = intermediary.get_name()
+    meat = intermediary.get_meat()
     veggies = intermediary.get_veggies()
-    veggies = list(map(str.lower, veggies))
-    starch = intermediary.get_starch().lower()
+#    veggies = list(map(str.lower, veggies))
+    starch = intermediary.get_starch()
     recipe_string = intermediary.get_recipe()
     cur.execute("insert into recipes values (?,?,?,?,?,?,?,?)", (name, meat, veggies[0], veggies[1], veggies[2], veggies[3], starch, recipe_string))
     conn.commit()
@@ -47,7 +47,7 @@ def Browse_db():
     return recipes
 
 def Find_for_edit(recipe_name):
-    recipe_name = recipe_name.lower()
+    recipe_name = str(recipe_name).lower()
     query = "select * from recipes where recipe_name = '%s'" % recipe_name
     for row in cur.execute(query):
         intermediary.set_name(recipe_name)
@@ -77,11 +77,11 @@ def Find_meat():
     
 
 def Edit_recipe(recipe):
-    recipe = recipe.lower()
-    meat = intermediary.get_meat().lower()
+    recipe = recipe
+    meat = intermediary.get_meat()
     veggies = intermediary.get_veggies()
     veggies = list(map(str.lower, veggies))
-    starch = intermediary.get_starch().lower()
+    starch = intermediary.get_starch()
     recipe_string = intermediary.get_recipe()
     update = "update recipes set meat='" + meat
     update += "', veggie_one='" + veggies[0]
@@ -99,7 +99,6 @@ def Recipe_text(recipe):
     query = "select recipe_file from recipes where recipe_name = '%s'" % recipe
     for row in cur.execute(query):
         return row[0]
-    
 
 def Print_db():
     for row in cur.execute("select recipe_name, meat, veggie_one, veggie_two, veggie_three, veggie_four, starch, recipe_file from recipes"):
@@ -120,7 +119,7 @@ def Find_recipe(MEAT, VEGGIES, NUM, STARCH):
 		matches = 0
 		for x in range(2, 7):
 			for y in range(0, NUM):
-				if VEGGIES[y] == row[x]:
+				if VEGGIES[y] != 'none' and VEGGIES[y] == row[x]:
 					matches += 1
 		if matches == NUM:
 			qualifying_recipes.append(row[0].title())

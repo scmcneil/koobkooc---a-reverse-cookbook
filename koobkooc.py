@@ -107,9 +107,9 @@ def main():
         if instruction != 'database' and instruction != 'recipe':
             print ('USAGE: "recipe" or "database"')
             instruction  = input('INSTRUCTION: ')
-        if instruction == 'database':
+        elif instruction == 'database':
             DB()
-        if instruction == 'recipe':
+        elif instruction == 'recipe':
             RECIPES()
         go_on = input('Do you want to do something else? (y/n): ')
         if go_on == 'n':
