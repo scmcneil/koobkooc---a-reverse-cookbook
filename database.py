@@ -65,6 +65,12 @@ def Find_veggies():
     for row in cur.execute(query1):
         if row[0] != 'none':
             VEGGIES.add(row[0])
+        if row[1] != 'none':
+            VEGGIES.add(row[1])
+        if row[2] != 'none':
+            VEGGIES.add(row[2])
+        if row[3] != 'none':
+            VEGGIES.add(row[3])
     return VEGGIES
 
 def Find_meat():
