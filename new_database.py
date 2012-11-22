@@ -53,6 +53,19 @@ def ADD():
 	add_recipe_starch(rid, sid)
 	conn.commit()
 	
+def DELETE(recipe):
+	'''premenantly deletes a recipe from the database'''
+	rid = get_recipe_id(recipe)
+	#get rid of the veggie relationships
+	cur.execute('delete from recipe_veggies where recipe_id=%u', % rid)
+	#get rid of the meat relationships
+	cur.execute('delete from recipe_meats where recipe_id=%u', % rid)
+	#get rid of the starch relationships
+	cur.execute('delete from recipe_starches where recipe_id=%u', % rid)
+	#get rid of the recipe itself
+	cur.execute('delete from recipes where id=%u', % rid)
+	
+	
 def get_recipe_id(recipe):
 	'''gets the ID of a recipe'''
 	for row in cur.execute("select id from recipes where name='%s'" % recipe):
