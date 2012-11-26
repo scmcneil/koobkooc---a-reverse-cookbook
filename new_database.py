@@ -73,21 +73,21 @@ def FIND(recipe):
     #find the meat
     intermediary.set_meat(get_meat_name(get_recipe_meat(rid)))
     #find the veggies
+    VEGGIES = []
     VIDS = get_recipe_veggies(rid)
     for vid in VIDS:
         VEGGIES.append(get_veggie_name(vid))
-    intermediary.set_veggie1(VEGGIE[0])
-    intermediary.set_veggie2(VEGGIE[1])
-    intermediary.set_veggie3(VEGGIE[2])
-    intermediary.set_veggie4(VEGGIE[3])
+    intermediary.set_veggies(VEGGIES)
     #find the starch
     intermediary.set_starch(get_starch_name(get_starch_id(rid)))
+    #find the recipe
+    intermediary.set_recipe(get_recipe_text(recipe))
 
 def SEARCH(meat, VEGGIES, starch):
     num_veggies = len(VEGGIES)
     mid = get_meat_id(meat)
     match_meat = set()
-    for row in cur.execute('select recipe_id from recipe_meats where meat_id=%u' % mid)
+    for row in cur.execute('select recipe_id from recipe_meats where meat_id=%u' % mid):
         match_meat.add(row[0])
     sid = get_starch_id(starch)
     match_starch = set()
@@ -194,5 +194,4 @@ def get_starch_name(starch_id):
     '''gets the name of a starch'''
     for row in cur.execute("select name from starches where name='%s'" % starch_id):
         return row[0]
-
 

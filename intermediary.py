@@ -9,6 +9,12 @@ VEGGIE1 = 'none'
 VEGGIE2 = 'none'
 VEGGIE3 = 'none'
 VEGGIE4 = 'none'
+VEGGIES = { 
+            '1': 'none',
+            '2': 'none',
+            '3': 'none',
+            '4': 'none'
+          }
 STARCH = 'none'
 RECIPE = ''
 
@@ -27,18 +33,27 @@ def set_meat(meat):
 def set_veggie1(veggie1):
     global VEGGIE1
     VEGGIE1 = str(veggie1).lower()
+    VEGGIES.update({'1': veggie1})
 
 def set_veggie2(veggie2):
     global VEGGIE2
     VEGGIE2 = str(veggie2).lower()
+    VEGGIES.update({'2': veggie2})
 
 def set_veggie3(veggie3):
     global VEGGIE3
     VEGGIE3 = str(veggie3).lower()
+    VEGGIES.update({'3': veggie3})
 
 def set_veggie4(veggie4):
     global VEGGIE4
     VEGGIE4 = str(veggie4).lower()
+    VEGGIES.update({'4': veggie4})
+
+def set_veggies(veggies):
+    for x in range(0, len(veggies)):
+        y = str(x)
+        VEGGIES.update({y: veggies[x]})
 
 def set_starch(starch):
     global STARCH
