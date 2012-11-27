@@ -55,9 +55,6 @@ class Screen1(QtGui.QWizardPage):
     #Screen that appears when the program is run
     def __init__(self, parent=None):
         super(Screen1, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -80,9 +77,6 @@ class Screen1(QtGui.QWizardPage):
 class Screen2(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen2, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -263,17 +257,12 @@ class Screen5(QtGui.QWizardPage):
     def add_recipe(self):
         #add the recipe and parameters to the database
         recipe = self.textEdit.toPlainText()
-        print(recipe)
         intermediary.set_recipe(recipe)
-        print('\n', intermediary.get_recipe())
         database.ADD()
 
 class Screen6(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen6, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -297,9 +286,6 @@ class Screen6(QtGui.QWizardPage):
 class Screen8(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen8, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
         spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
@@ -318,7 +304,7 @@ class Screen8(QtGui.QWizardPage):
         self.nameShow = QtGui.QComboBox(self)
         self.nameShow.addItem('---select---')
         self.nameShow.activated[str].connect(self.listclicked)
-        all_recipes = database.Browse_db()
+        all_recipes = database.get_recipe_names()
         if len(all_recipes) > 0:
             for x in all_recipes:
                 self.nameShow.addItem(x)
@@ -367,7 +353,7 @@ class Screen8(QtGui.QWizardPage):
         self.setLayout(grid)
 
     def listclicked(self, text):
-        database.Find_for_edit(text)
+        database.FIND(text)
         if intermediary.get_meat() != 'none':
             self.meatEdit.setText(intermediary.get_meat().title())
         VEGGIES = intermediary.get_veggies()
@@ -445,9 +431,7 @@ class Screen9(QtGui.QWizardPage):
         recipe_name = intermediary.get_name()
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
-        database.Edit_recipe(recipe_name)
-        print(intermediary.get_name())
-        print('roar')
+        database.EDIT(recipe_name)
 
     def fill(self):
         #fills in textEdit with the recipe text from the database
@@ -458,9 +442,6 @@ class Screen9(QtGui.QWizardPage):
 class Screen10(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen10, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -484,14 +465,11 @@ class Screen10(QtGui.QWizardPage):
 class Screen11(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen11, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListWidget()
-        all_recipes = database.Browse_db()
+        all_recipes = database.get_recipe_names()
         if len(all_recipes) > 0:
             for x in all_recipes:
                 item = QtGui.QListWidgetItem(x)
@@ -520,11 +498,11 @@ class Screen11(QtGui.QWizardPage):
 
     def delete_recipe(self):
         recipe = intermediary.get_name()
-        database.Delete_from_db(recipe)
+        database.DELETE(recipe)
 
         #reset the list of recipes
         self.recipes.clear()
-        all_recipes = database.Browse_db()
+        all_recipes = database.get_recipe_names()
         if len(all_recipes) > 0:
             for x in all_recipes:
                 item = QtGui.QListWidgetItem(x)
@@ -535,9 +513,6 @@ class Screen11(QtGui.QWizardPage):
 class Screen12(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen12, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -561,9 +536,6 @@ class Screen12(QtGui.QWizardPage):
 class Screen13(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen13, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
         spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
@@ -593,13 +565,13 @@ class Screen13(QtGui.QWizardPage):
         veggie4Select = QtGui.QComboBox(self)
         veggie4Select.activated[str].connect(self.veggie4Selected)
         veggie4Select.addItem('---select---')
-        VEGGIES = database.Find_veggies()
+        VEGGIES = database.get_veggie_names()
         for x in VEGGIES:
             veggie1Select.addItem(x)
             veggie2Select.addItem(x)
             veggie3Select.addItem(x)
             veggie4Select.addItem(x)
-        MEAT = database.Find_meat()
+        MEAT = database.get_meat_names()
         for x in MEAT:
             meatSelect.addItem(x)
             
@@ -658,9 +630,6 @@ class Screen13(QtGui.QWizardPage):
 class Screen14(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen14, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -682,7 +651,7 @@ class Screen14(QtGui.QWizardPage):
         VEGGIES = intermediary.get_veggies_for_search()
         NUM = len(VEGGIES)
         STARCH = intermediary.get_starch()
-        RECIPES = database.Find_recipe(MEAT, VEGGIES, NUM, STARCH)
+        RECIPES = database.SEARCH(MEAT, VEGGIES, NUM, STARCH)
         print(VEGGIES)
         print(RECIPES)
         if len(RECIPES) > 0:
@@ -694,30 +663,20 @@ class Screen14(QtGui.QWizardPage):
     def listclicked(self, item):
         recipe = str(self.recipes.currentItem().text())
         #recipe_text = database.Recipe_text(recipe)
-        database.Find_for_edit(recipe)
+        database.FIND(recipe)
 
 class Screen15(QtGui.QWizardPage):
     def __init__(self, parent=None):
         super(Screen15, self).__init__()
-        self.initUI()
-
-    def initUI(self):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
-        #self.textView = QtGui.QTextBrowser()
         self.textView = QtGui.QTextEdit()
         self.textView.setReadOnly(True)
         self.textView.setGeometry(10, 230, 680, 400)
-        #self.textView.show()
         fillButton = QtGui.QPushButton('Fill', self)
         fillButton.move(10, 210)
         fillButton.clicked.connect(self.fill)
-        #grid = QtGui.QGridLayout()
-        #grid.setSpacing(10)
-        #grid.addWidget(pic, 1, 0, 1, 1)
-        #grid.addWidget(self.textView, 2, 0, 2, 1)
-        #self.setLayout(grid)
         layout = QtGui.QVBoxLayout()
         layout.addWidget(pic)
         layout.addWidget(self.textView)
