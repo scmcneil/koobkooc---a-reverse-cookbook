@@ -65,6 +65,42 @@ def DELETE(recipe):
     conn.commit()
 
 def EDIT(recipe):
+    rid = get_recipe_id(recipe)
+    # Update the veggies
+    VEGGIES = intermediary.get_veggies_for_search()
+    VIDS = set()
+    for veggie in VEGGIES:
+        add_veggie(veggie)
+        VIDS.add(get_veggie_id(veggie))
+    ORIGINAL = set(get_recipe_veggies(rid))
+    if VIDS != ORIGINAL:
+        # this should be a set of the veggies that need to be deleted
+        OLD = ORIGINAL - VIDS
+        for old in OLD:
+            cur.execute('delete from recipe_veggies where recipe_id={1} and veggie_id={2}'.format(rid, old))
+        conn.commit()
+        # this should be a set of the new veggies that need to be added
+        VIDS = VIDS - ORIGINAL
+        for vid in VIDS:
+            add_recipe_veggie(rid, vid)
+        conn.commit()
+    # Update the meat
+    meat = get_meat_id(intermediary.get_meat())
+    old_meat = get_recipe_meat(rid)
+    if meat != old_meat:
+        cur.execute('delete from recipe_meats where recipe_id=%u' % rid)
+        add_recipe_meat(rid, meat)
+    # Update the starch
+    starch = get_starch_id(intermediary.get_starch())
+    old_starch = get_recipe_starch(rid)
+    if starch != old_starch:
+        cur.execute('delete from recipe_starches where recipe_id=%u' % rid)
+        add_recipe_meat(rid, starch)
+    # Update the recipe file
+    recipe_file = intermediary.get_recipe()
+    if recipe_file != get_recipe_text(rid):
+        cur.execute('update recipes set recipe_file="%s"' % recipe_file)
+    conn.commit()
     return
 
 def FIND(recipe):
@@ -85,6 +121,9 @@ def FIND(recipe):
 
 def SEARCH(meat, VEGGIES, starch):
     num_veggies = len(VEGGIES)
+    VIDS = set()
+    for veggie in VEGGIES:
+        VIDS.add(get_veggie_id(veggie))
     mid = get_meat_id(meat)
     match_meat = set()
     for row in cur.execute('select recipe_id from recipe_meats where meat_id=%u' % mid):
@@ -93,13 +132,17 @@ def SEARCH(meat, VEGGIES, starch):
     match_starch = set()
     for row in cur.execute('select recipe_id from recipe_meats where starch_id=%u' % sid):
         match_starch.add(row[0])
-    match_meat_and_starch = set()
-    for meat in match_meat:
-        for starch in match_starch:
-            if meat == starch:
-                match_meat_and_starch.add(meat)
-
-    return
+    match_meat_and_starch = match_meat.intersection(match_starch)
+    qualifying_recipes = set()
+    for id in match_meat_and_starch:
+        for row in execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
+            matches = 0
+            for x in range(0, num_veggies):
+                if VIDS[x] == row[0]:
+                    matches += 1
+            if matches == num_veggies:
+                qualifying_recipes.add(id)
+    return qualifying_recipes
 
 def get_recipe_names():
     '''gets the names of all the recipes in the database'''
