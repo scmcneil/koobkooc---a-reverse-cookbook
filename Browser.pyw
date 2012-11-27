@@ -19,7 +19,7 @@ class Browser(QtGui.QWidget):
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.textBrowser = QtGui.QTextBrowser()
         self.recipes = QtGui.QListWidget()
-        all_recipes = database.Browse_db()
+        all_recipes = database.get_recipe_names()
         if len(all_recipes) > 0:
             for x in all_recipes:
                 item = QtGui.QListWidgetItem(x)
@@ -34,8 +34,7 @@ class Browser(QtGui.QWidget):
         
     def listclicked(self, item):
         recipe = self.recipes.currentItem().text()
-        database.Find_for_edit(recipe)
-        #recipe_text = database.Recipe_text(recipe)
+        database.FIND(recipe)
         recipe_text = intermediary.get_recipe()
         self.textBrowser.setText(recipe_text)
             
