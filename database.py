@@ -9,7 +9,7 @@ try:
     cur.execute('create table if not exists recipes( id integer primary key autoincrement, name text unique, recipe_file text)')
     cur.execute('create table if not exists meats( id integer primary key autoincrement, name text unique)')
     cur.execute('create table if not exists veggies( id integer primary key autoincrement, name text unique)')
-    cur.execute('create table if not exists starches( id integer primary key autoincrement, name text unique)')
+    cur.execute('create table if not exists starches( id integer primary key, name text unique)')
     cur.execute('create table if not exists recipe_veggies( recipe_id integer, veggie_id integer)')
     cur.execute('create table if not exists recipe_starches( recipe_id integer, starch_id integer)')
     cur.execute('create table if not exists recipe_meats( recipe_id integer, meat_id integer)')
@@ -18,9 +18,9 @@ except:
     pass
 	
 # Populate starches table (only the first time)
-cur.execute('insert or ignore into starches (name) values ("Rice")')
-cur.execute('insert or ignore into starches (name) values ("Noodles")')
-cur.execute('insert or ignore into starches (name) values ("Potatoes")')
+cur.execute('insert or ignore into starches (id, name) values (1, "rice")')
+cur.execute('insert or ignore into starches (id, name) values (2, "noodles")')
+cur.execute('insert or ignore into starches (id, name) values (3, "potatoes")')
 conn.commit()
 
 # Database functions
@@ -29,21 +29,27 @@ def ADD():
     ''' Adds a recipe into the database'''
     name = intermediary.get_name()
     meat = intermediary.get_meat()
+    print(meat)
     VEGGIES = intermediary.get_veggies()
+    print(VEGGIES)
     starch = intermediary.get_starch()
+    print(starch)
     recipe = intermediary.get_recipe()
     # Put the name of the recipe and the file into the database
     cur.execute('insert or ignore into recipes (name, recipe_file) values (?,?)', (name, recipe))
     rid = get_recipe_id(name)
     # Try to put the meats and vegetables into the database in case they are not already there
     VIDS = {}
-    for veggie in VEGGIES:
-        add_veggie(veggie)
-        id = get_veggie_id(veggie)
-        VIDS.update({veggie: id})
+    for veggie in VEGGIES.values():
+        if veggie != '':
+            add_veggie(veggie)
+            id = get_veggie_id(veggie)
+            VIDS.update({veggie: id})
+    print(VIDS)
     cur.execute('insert or ignore into meats (name) values ("%s")' % meat)
     mid = get_meat_id(meat)
     sid = get_starch_id(starch)
+    print(sid)
     # Put the meat, vegetable, and starch relationships into the database
     for value in VIDS.values():
         add_recipe_veggie(rid, value)
@@ -106,16 +112,27 @@ def EDIT(recipe):
 def FIND(recipe):
     '''finds the meat, veggies, and starch that goes with a recipe'''
     rid = get_recipe_id(recipe)
+    print(rid)
     #find the meat
-    intermediary.set_meat(get_meat_name(get_recipe_meat(rid)))
+    mid = get_recipe_meat(rid)
+    if mid != 'None':
+        print(mid)
+        intermediary.set_meat(get_meat_name(get_recipe_meat(rid)))
+        print(intermediary.get_meat())
     #find the veggies
     VEGGIES = []
     VIDS = get_recipe_veggies(rid)
     for vid in VIDS:
         VEGGIES.append(get_veggie_name(vid))
+    print(VIDS, VEGGIES)
     intermediary.set_veggies(VEGGIES)
+    roar = intermediary.get_veggies()
+    print(roar)
     #find the starch
-    intermediary.set_starch(get_starch_name(get_starch_id(rid)))
+    sid = get_recipe_starch(rid)
+    print (sid)
+    if sid != None:
+        intermediary.set_starch(get_starch_name(sid))
     #find the recipe
     intermediary.set_recipe(get_recipe_text(recipe))
 
@@ -191,7 +208,7 @@ def get_meat_id(meat):
 		
 def get_starch_id(starch):
     '''gets the ID of a starch'''
-    for row in cur.execute("select * from starches where name='%s'" % starch):
+    for row in cur.execute("select id from starches where name='%s'" % starch):
         return row[0]
 
 def add_recipe_veggie(recipe, veggie):
@@ -230,11 +247,11 @@ def get_veggie_name(veggie_id):
 		
 def get_meat_name(meat_id):
     '''gets the name of a meat'''
-    for row in cur.execute("select name from meats where name='%s'" % meat_id):
+    for row in cur.execute("select name from meats where id=%u" % meat_id):
         return row[0]
 		
 def get_starch_name(starch_id):
     '''gets the name of a starch'''
-    for row in cur.execute("select name from starches where name='%s'" % starch_id):
+    for row in cur.execute("select name from starches where id=%u" % starch_id):
         return row[0]
 

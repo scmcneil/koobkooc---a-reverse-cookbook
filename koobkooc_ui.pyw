@@ -353,18 +353,20 @@ class Screen8(QtGui.QWizardPage):
         self.setLayout(grid)
 
     def listclicked(self, text):
+        print(text)
         database.FIND(text)
         if intermediary.get_meat() != 'none':
             self.meatEdit.setText(intermediary.get_meat().title())
         VEGGIES = intermediary.get_veggies()
-        if VEGGIES[0] != 'none':
-            self.veggie1Edit.setText(VEGGIES[0].title())
-        if VEGGIES[1] != 'none':
-            self.veggie2Edit.setText(VEGGIES[1].title())
-        if VEGGIES[2] != 'none':
-            self.veggie3Edit.setText(VEGGIES[2].title())
-        if VEGGIES[3] != 'none':
-            self.veggie4Edit.setText(VEGGIES[3].title())
+        #print (VEGGIES)
+        if VEGGIES['1'] != '':
+            self.veggie1Edit.setText(VEGGIES['1'].title())
+        if VEGGIES['2'] != 'none':
+            self.veggie2Edit.setText(VEGGIES['2'].title())
+        if VEGGIES['3'] != 'none':
+            self.veggie3Edit.setText(VEGGIES['3'].title())
+        if VEGGIES['4'] != 'none':
+            self.veggie4Edit.setText(VEGGIES['4'].title())
         starch = intermediary.get_starch().title()
         if starch == 'Rice':
             self.starchRadio1.setChecked(1)

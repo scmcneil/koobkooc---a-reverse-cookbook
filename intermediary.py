@@ -9,11 +9,11 @@ VEGGIE1 = 'none'
 VEGGIE2 = 'none'
 VEGGIE3 = 'none'
 VEGGIE4 = 'none'
-VEGGIES = { 
-            '1': 'none',
-            '2': 'none',
-            '3': 'none',
-            '4': 'none'
+VEGGIES = {
+            '1': '',
+            '2': '',
+            '3': '',
+            '4': ''
           }
 STARCH = 'none'
 RECIPE = ''
@@ -31,29 +31,34 @@ def set_meat(meat):
     MEAT = str(meat).lower()
 
 def set_veggie1(veggie1):
-    global VEGGIE1
-    VEGGIE1 = str(veggie1).lower()
-    VEGGIES.update({'1': veggie1})
+    #global VEGGIE1
+    #VEGGIE1 = str(veggie1).lower()
+    global VEGGIES
+    VEGGIES.update({'1': veggie1.lower()})
 
 def set_veggie2(veggie2):
-    global VEGGIE2
-    VEGGIE2 = str(veggie2).lower()
-    VEGGIES.update({'2': veggie2})
+    #global VEGGIE2
+    #VEGGIE2 = str(veggie2).lower()
+    global VEGGIES
+    VEGGIES.update({'2': veggie2.lower()})
 
 def set_veggie3(veggie3):
-    global VEGGIE3
-    VEGGIE3 = str(veggie3).lower()
-    VEGGIES.update({'3': veggie3})
+    #global VEGGIE3
+    #VEGGIE3 = str(veggie3).lower()
+    global VEGGIES
+    VEGGIES.update({'3': veggie3.lower()})
 
 def set_veggie4(veggie4):
-    global VEGGIE4
-    VEGGIE4 = str(veggie4).lower()
-    VEGGIES.update({'4': veggie4})
+    #global VEGGIE4
+    #VEGGIE4 = str(veggie4).lower()
+    global VEGGIES
+    VEGGIES.update({'4': veggie4.lower()})
 
 def set_veggies(veggies):
-    for x in range(0, len(veggies)):
+    global VEGGIES
+    for x in range(1, len(veggies)+1):
         y = str(x)
-        VEGGIES.update({y: veggies[x]})
+        VEGGIES.update({y: veggies[x-1].lower()})
 
 def set_starch(starch):
     global STARCH
@@ -77,7 +82,7 @@ def get_meat():
     return MEAT
 
 def get_veggies():
-    VEGGIES = [VEGGIE1, VEGGIE2, VEGGIE3, VEGGIE4]
+    #VEGGIES = [VEGGIE1, VEGGIE2, VEGGIE3, VEGGIE4]
     return VEGGIES
 
 def get_veggies_for_search():
