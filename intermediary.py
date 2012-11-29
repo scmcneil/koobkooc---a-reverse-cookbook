@@ -17,6 +17,7 @@ VEGGIES = {
           }
 STARCH = 'none'
 RECIPE = ''
+ID = -1
 
 def set_types(recipe_type):
     global RECIPE_TYPE
@@ -68,6 +69,10 @@ def set_recipe(recipe):
     global RECIPE
     RECIPE = str(recipe)
 
+def set_id(id):
+    global ID
+    ID = id
+    
 def send_the_things():
     VEGGIES = [VEGGIE1, VEGGIE2, VEGGIE3, VEGGIE4]
     return NAME, MEAT, VEGGIES, STARCH, RECIPE
@@ -103,6 +108,9 @@ def get_recipe():
 
 def get_starch():
     return STARCH
+    
+def get_id():
+    return ID
 
 
 

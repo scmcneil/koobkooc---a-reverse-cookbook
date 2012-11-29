@@ -353,8 +353,14 @@ class Screen8(QtGui.QWizardPage):
         self.setLayout(grid)
 
     def listclicked(self, text):
-        print(text)
+        print('clicked:', text)
         database.FIND(text)
+        intermediary.set_id(database.get_recipe_id(text))
+        print(intermediary.get_id())
+        self.veggie1Edit.clear()
+        self.veggie2Edit.clear()
+        self.veggie3Edit.clear()
+        self.veggie4Edit.clear()
         if intermediary.get_meat() != 'none':
             self.meatEdit.setText(intermediary.get_meat().title())
         VEGGIES = intermediary.get_veggies()
@@ -422,6 +428,7 @@ class Screen9(QtGui.QWizardPage):
         grid.addWidget(self.textEdit, 3, 0, 4, 0)
         grid.addWidget(editButton, 7, 0)
         self.setLayout(grid)
+        print("RRECIPE", intermediary.get_name())
         self.nextId()
 
     def nextId(self):
@@ -431,6 +438,7 @@ class Screen9(QtGui.QWizardPage):
     def edit_recipe(self):
         #update the recipe and parameters in the database
         recipe_name = intermediary.get_name()
+        print('recipe name: ', recipe_name)
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
         database.EDIT(recipe_name)
@@ -438,7 +446,9 @@ class Screen9(QtGui.QWizardPage):
     def fill(self):
         #fills in textEdit with the recipe text from the database
         self.textEdit.clear()
+        print('recipe_name from fill: ', intermediary.get_name())
         recipe_text = intermediary.get_recipe()
+        print('recipe text', recipe_text)
         self.textEdit.insertPlainText(recipe_text)
 
 class Screen10(QtGui.QWizardPage):

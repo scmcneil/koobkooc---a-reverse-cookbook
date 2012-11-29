@@ -71,19 +71,32 @@ def DELETE(recipe):
     conn.commit()
 
 def EDIT(recipe):
+    print('recipe: ', recipe)
     rid = get_recipe_id(recipe)
+    #intermediary.set_id(rid)
+    print('rid: ', rid)
+    id = intermediary.get_id()
+    print('get_id: ', id)
+    name = get_recipe_name(id)
+    print('name: ', name)
     # Update the veggies
-    VEGGIES = intermediary.get_veggies_for_search()
+    VEGGIES = intermediary.get_veggies()
+    print('V: ', VEGGIES)
+    print(VEGGIES)
     VIDS = set()
-    for veggie in VEGGIES:
-        add_veggie(veggie)
-        VIDS.add(get_veggie_id(veggie))
+    for veggie in VEGGIES.values():
+        if veggie != '':
+            add_veggie(veggie)
+            VIDS.add(get_veggie_id(veggie))
     ORIGINAL = set(get_recipe_veggies(rid))
+    print('VIDS: ', VIDS)
+    print('ORIGINAL: ', ORIGINAL)
     if VIDS != ORIGINAL:
         # this should be a set of the veggies that need to be deleted
         OLD = ORIGINAL - VIDS
+        print('old: ', OLD)
         for old in OLD:
-            cur.execute('delete from recipe_veggies where recipe_id={1} and veggie_id={2}'.format(rid, old))
+            cur.execute('delete from recipe_veggies where recipe_id=%1s and veggie_id=%2s' % (rid, old))
         conn.commit()
         # this should be a set of the new veggies that need to be added
         VIDS = VIDS - ORIGINAL
@@ -104,33 +117,35 @@ def EDIT(recipe):
         add_recipe_meat(rid, starch)
     # Update the recipe file
     recipe_file = intermediary.get_recipe()
+    print(recipe_file)
     if recipe_file != get_recipe_text(rid):
-        cur.execute('update recipes set recipe_file="%s"' % recipe_file)
+        cur.execute('update recipes set recipe_file="%s" where id=%u' % (recipe_file, rid))
     conn.commit()
     return
 
 def FIND(recipe):
     '''finds the meat, veggies, and starch that goes with a recipe'''
     rid = get_recipe_id(recipe)
-    print(rid)
+    intermediary.set_name(recipe)
+    print('rid: ', rid)
     #find the meat
     mid = get_recipe_meat(rid)
     if mid != 'None':
-        print(mid)
+        print('mid: ', mid)
         intermediary.set_meat(get_meat_name(get_recipe_meat(rid)))
-        print(intermediary.get_meat())
+        print('meat: ', intermediary.get_meat())
     #find the veggies
     VEGGIES = []
     VIDS = get_recipe_veggies(rid)
     for vid in VIDS:
         VEGGIES.append(get_veggie_name(vid))
-    print(VIDS, VEGGIES)
+    print('VIDS: ', VIDS, 'VEGGIES: ', VEGGIES)
     intermediary.set_veggies(VEGGIES)
     roar = intermediary.get_veggies()
-    print(roar)
+    print('veggies: ', roar)
     #find the starch
     sid = get_recipe_starch(rid)
-    print (sid)
+    print ('sid: ', sid)
     if sid != None:
         intermediary.set_starch(get_starch_name(sid))
     #find the recipe
@@ -185,6 +200,11 @@ def get_meat_names():
 def get_recipe_id(recipe):
     '''gets the ID of a recipe'''
     for row in cur.execute("select id from recipes where name='%s'" % recipe):
+        return row[0]
+
+def get_recipe_name(id):
+    '''gets the name of a recipe'''
+    for row in cur.execute("select name from recipes where id=%u" % id):
         return row[0]
 
 def get_recipe_text(recipe):
