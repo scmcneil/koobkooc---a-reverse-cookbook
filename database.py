@@ -35,9 +35,10 @@ def ADD_MAIN():
     VEGGIES = intermediary.get_veggies()
     starch = intermediary.get_starch()
     recipe = intermediary.get_recipe()
-    dish_type = intermediary.get_type()
+    #dish_type = intermediary.get_type()
+    dish_type = 'main'
     # Put the name of the recipe and the file into the database
-    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?)', (name, dish_type, recipe))
+    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?,?)', (name, dish_type, recipe))
     rid = get_recipe_id(name)
     # Try to put the meats and vegetables into the database in case they are not already there
     for veggie in VEGGIES.values():
@@ -143,7 +144,7 @@ def FIND_MAIN(recipe):
     #find the recipe
     intermediary.set_recipe(get_recipe_text(recipe))
 
-def STRICT_SEARCH_MAIN(meat, VEGGIES, starch):
+def SEARCH_MAIN(meat, VEGGIES, starch, strict):
     num_veggies = len(VEGGIES)
     VIDS = set()
     for veggie in VEGGIES.values():
@@ -159,12 +160,19 @@ def STRICT_SEARCH_MAIN(meat, VEGGIES, starch):
         match_starch.add(row[0])
     match_meat_and_starch = match_meat.intersection(match_starch)
     qualifying_recipes = set()
+
     for id in match_meat_and_starch:
         temp = set()
         for row in cur.execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
             temp.add(row[0])
-        if temp == VIDS:
-            qualifying_recipes.add(get_recipe_name(id))
+        if strict:
+            if temp == VIDS:
+                qualifying_recipes.add(get_recipe_name(id))
+        elif not strict:
+            if temp.intersection(VIDS) > set():
+                qualifying_recipes.add(get_recipe_name(id))
+    qualifying_recipes = sorted(qualifying_recipes, key=lambda item: (int(item.partition(' ')[0])
+                                        if item[0].isdigit() else float('inf'), item))
     return qualifying_recipes
 
 def get_recipe_names():

@@ -43,25 +43,29 @@ def set_veggie1(veggie1):
     #global VEGGIE1
     #VEGGIE1 = str(veggie1).lower()
     global VEGGIES
-    VEGGIES.update({'1': veggie1.lower()})
+    veg = str(veggie1).lower()
+    VEGGIES.update({'1': veg})
 
 def set_veggie2(veggie2):
     #global VEGGIE2
     #VEGGIE2 = str(veggie2).lower()
     global VEGGIES
-    VEGGIES.update({'2': veggie2.lower()})
+    veg = str(veggie2).lower()
+    VEGGIES.update({'2': veg})
 
 def set_veggie3(veggie3):
     #global VEGGIE3
     #VEGGIE3 = str(veggie3).lower()
     global VEGGIES
-    VEGGIES.update({'3': veggie3.lower()})
+    veg = str(veggie3).lower()
+    VEGGIES.update({'3': veg})
 
 def set_veggie4(veggie4):
     #global VEGGIE4
     #VEGGIE4 = str(veggie4).lower()
     global VEGGIES
-    VEGGIES.update({'4': veggie4.lower()})
+    veg = str(veggie4).lower()
+    VEGGIES.update({'4': veg})
 
 def set_veggies(veggies):
     global VEGGIES
@@ -83,7 +87,7 @@ def set_id(id):
 def set_ingredients(ingredients):
     global INGREDIENTS
     for x in range(1, len(ingredients)+1):
-        INGREDIENTS.update({str(x): ingredients[x-1].lower())
+        INGREDIENTS.update({str(x): ingredients[x-1].lower()})
     
 def send_the_things():
     VEGGIES = [VEGGIE1, VEGGIE2, VEGGIE3, VEGGIE4]

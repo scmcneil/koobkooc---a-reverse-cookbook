@@ -218,6 +218,7 @@ class Screen4(QtGui.QWizardPage):
         elif self.starchRadio3.isChecked():
             intermediary.set_starch('Potatoes')
         #self.setLabel.setText('Parameters set!')
+        return wizard.Set_recipe
 
 class Screen5(QtGui.QWizardPage):
     def __init__(self, parent):
@@ -357,10 +358,8 @@ class Screen8(QtGui.QWizardPage):
         self.setLayout(grid)
 
     def listclicked(self, text):
-        print('clicked:', text)
         database.FIND_MAIN(text)
         intermediary.set_id(database.get_recipe_id(text))
-        print(intermediary.get_id())
         self.veggie1Edit.clear()
         self.veggie2Edit.clear()
         self.veggie3Edit.clear()
@@ -368,7 +367,6 @@ class Screen8(QtGui.QWizardPage):
         if intermediary.get_meat() != 'none':
             self.meatEdit.setText(intermediary.get_meat().title())
         VEGGIES = intermediary.get_veggies()
-        #print (VEGGIES)
         if VEGGIES['1'] != '':
             self.veggie1Edit.setText(VEGGIES['1'].title())
         if VEGGIES['2'] != 'none':
@@ -441,7 +439,6 @@ class Screen9(QtGui.QWizardPage):
     def edit_recipe(self):
         #update the recipe and parameters in the database
         recipe_name = intermediary.get_name()
-        print('recipe name: ', recipe_name)
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
         database.EDIT_MAIN(recipe_name)
@@ -449,9 +446,7 @@ class Screen9(QtGui.QWizardPage):
     def fill(self):
         #fills in textEdit with the recipe text from the database
         self.textEdit.clear()
-        print('recipe_name from fill: ', intermediary.get_name())
         recipe_text = intermediary.get_recipe()
-        print('recipe text', recipe_text)
         self.textEdit.insertPlainText(recipe_text)
 
 class Screen10(QtGui.QWizardPage):
@@ -653,22 +648,33 @@ class Screen14(QtGui.QWizardPage):
         label = QtGui.QLabel('Select a recipe to view')
         self.searchButton = QtGui.QPushButton('Run Search', self)
         self.searchButton.clicked.connect(self.search)
-        self.searchButton.move(155, 230)
+        self.searchButton.move(350, 230)
+        self.strictLabel = QtGui.QLabel('Strict Search?')
+        #self.strictLabel.move(190, 230)
+        self.strictRadio = QtGui.QRadioButton('&yes', self)
+        #self.strictRadio.move(220, 230)
+        self.nonstrictRadio = QtGui.QRadioButton('&no', self)
+        #self.nonstrictRadio.move(240, 230)
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 1, 0)
         grid.addWidget(label, 2, 0)
-        grid.addWidget(self.recipes, 3, 0, 4, 0)
+        grid.addWidget(self.strictLabel, 3, 0)
+        grid.addWidget(self.strictRadio, 4, 0)
+        grid.addWidget(self.nonstrictRadio, 5, 0)
+        grid.addWidget(self.recipes, 6, 0, 4, 0)
         self.setLayout(grid)
 
     def search(self):
+        self.recipes.clear()
         MEAT = intermediary.get_meat()
         VEGGIES = intermediary.get_veggies()
         NUM = len(VEGGIES)
         STARCH = intermediary.get_starch()
-        RECIPES = database.STRICT_SEARCH_MAIN(MEAT, VEGGIES, STARCH)
-        print(VEGGIES)
-        print(RECIPES)
+        strict = False
+        if self.strictRadio.isChecked() == True:
+            strict = True
+        RECIPES = database.SEARCH_MAIN(MEAT, VEGGIES, STARCH, strict)
         if len(RECIPES) > 0:
             for x in RECIPES:
                 item = QtGui.QListWidgetItem(x)
