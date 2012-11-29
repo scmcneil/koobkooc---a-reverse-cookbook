@@ -29,11 +29,8 @@ def ADD():
     ''' Adds a recipe into the database'''
     name = intermediary.get_name()
     meat = intermediary.get_meat()
-    print(meat)
     VEGGIES = intermediary.get_veggies()
-    print(VEGGIES)
     starch = intermediary.get_starch()
-    print(starch)
     recipe = intermediary.get_recipe()
     # Put the name of the recipe and the file into the database
     cur.execute('insert or ignore into recipes (name, recipe_file) values (?,?)', (name, recipe))
@@ -176,14 +173,8 @@ def SEARCH(meat, VEGGIES, starch):
         roar = set()
         for row in cur.execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
             roar.add(row[0])
-            #matches = 0
-            #for x in range(0, num_veggies+1):
-            #    if temp[x] == row[0]:
-            #        matches += 1
-            #if matches == num_veggies:
-            #    qualifying_recipes.add(id)
         if roar == VIDS:
-            qualifying_recipes.add(id)
+            qualifying_recipes.add(get_recipe_name(id))
     print('qr: ', qualifying_recipes)
     return qualifying_recipes
 

@@ -667,7 +667,7 @@ class Screen14(QtGui.QWizardPage):
         print(RECIPES)
         if len(RECIPES) > 0:
             for x in RECIPES:
-                item = QtGui.QListWidgetItem(database.get_recipe_name(x))
+                item = QtGui.QListWidgetItem(x)
                 self.recipes.addItem(item)
         self.recipes.clicked.connect(self.listclicked)
 
