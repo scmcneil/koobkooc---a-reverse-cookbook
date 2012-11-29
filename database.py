@@ -152,28 +152,39 @@ def FIND(recipe):
     intermediary.set_recipe(get_recipe_text(recipe))
 
 def SEARCH(meat, VEGGIES, starch):
+    print('meat: ', meat, 'veggies: ', VEGGIES, 'starch: ', starch)
     num_veggies = len(VEGGIES)
     VIDS = set()
-    for veggie in VEGGIES:
-        VIDS.add(get_veggie_id(veggie))
+    for veggie in VEGGIES.values():
+        if veggie != '':
+            VIDS.add(get_veggie_id(veggie))
     mid = get_meat_id(meat)
     match_meat = set()
     for row in cur.execute('select recipe_id from recipe_meats where meat_id=%u' % mid):
         match_meat.add(row[0])
+    print('match_meat: ', match_meat)
     sid = get_starch_id(starch)
     match_starch = set()
-    for row in cur.execute('select recipe_id from recipe_meats where starch_id=%u' % sid):
+    for row in cur.execute('select recipe_id from recipe_starches where starch_id=%u' % sid):
         match_starch.add(row[0])
+    print('match_starch: ', match_starch)
     match_meat_and_starch = match_meat.intersection(match_starch)
+    print('both: ', match_meat_and_starch)
     qualifying_recipes = set()
+    temp = list(VIDS)
     for id in match_meat_and_starch:
-        for row in execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
-            matches = 0
-            for x in range(0, num_veggies):
-                if VIDS[x] == row[0]:
-                    matches += 1
-            if matches == num_veggies:
-                qualifying_recipes.add(id)
+        roar = set()
+        for row in cur.execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
+            roar.add(row[0])
+            #matches = 0
+            #for x in range(0, num_veggies+1):
+            #    if temp[x] == row[0]:
+            #        matches += 1
+            #if matches == num_veggies:
+            #    qualifying_recipes.add(id)
+        if roar == VIDS:
+            qualifying_recipes.add(id)
+    print('qr: ', qualifying_recipes)
     return qualifying_recipes
 
 def get_recipe_names():

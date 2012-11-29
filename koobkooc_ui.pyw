@@ -428,7 +428,6 @@ class Screen9(QtGui.QWizardPage):
         grid.addWidget(self.textEdit, 3, 0, 4, 0)
         grid.addWidget(editButton, 7, 0)
         self.setLayout(grid)
-        print("RRECIPE", intermediary.get_name())
         self.nextId()
 
     def nextId(self):
@@ -660,15 +659,15 @@ class Screen14(QtGui.QWizardPage):
 
     def search(self):
         MEAT = intermediary.get_meat()
-        VEGGIES = intermediary.get_veggies_for_search()
+        VEGGIES = intermediary.get_veggies()
         NUM = len(VEGGIES)
         STARCH = intermediary.get_starch()
-        RECIPES = database.SEARCH(MEAT, VEGGIES, NUM, STARCH)
+        RECIPES = database.SEARCH(MEAT, VEGGIES, STARCH)
         print(VEGGIES)
         print(RECIPES)
         if len(RECIPES) > 0:
             for x in RECIPES:
-                item = QtGui.QListWidgetItem(x)
+                item = QtGui.QListWidgetItem(database.get_recipe_name(x))
                 self.recipes.addItem(item)
         self.recipes.clicked.connect(self.listclicked)
 
