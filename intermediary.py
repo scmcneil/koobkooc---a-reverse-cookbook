@@ -18,6 +18,14 @@ VEGGIES = {
 STARCH = 'none'
 RECIPE = ''
 ID = -1
+INGREDIENTS = {
+                '1': '',
+                '2': '',
+                '3': '',
+                '4': '',
+                '5': '',
+                '6': ''
+              }
 
 def set_types(recipe_type):
     global RECIPE_TYPE
@@ -58,8 +66,7 @@ def set_veggie4(veggie4):
 def set_veggies(veggies):
     global VEGGIES
     for x in range(1, len(veggies)+1):
-        y = str(x)
-        VEGGIES.update({y: veggies[x-1].lower()})
+        VEGGIES.update({str(x): veggies[x-1].lower()})
 
 def set_starch(starch):
     global STARCH
@@ -72,6 +79,11 @@ def set_recipe(recipe):
 def set_id(id):
     global ID
     ID = id
+
+def set_ingredients(ingredients):
+    global INGREDIENTS
+    for x in range(1, len(ingredients)+1):
+        INGREDIENTS.update({str(x): ingredients[x-1].lower())
     
 def send_the_things():
     VEGGIES = [VEGGIE1, VEGGIE2, VEGGIE3, VEGGIE4]
@@ -87,7 +99,6 @@ def get_meat():
     return MEAT
 
 def get_veggies():
-    #VEGGIES = [VEGGIE1, VEGGIE2, VEGGIE3, VEGGIE4]
     return VEGGIES
 
 def get_veggies_for_search():
@@ -112,6 +123,7 @@ def get_starch():
 def get_id():
     return ID
 
-
+def get_ingredients():
+    return INGREDIENTS
 
 

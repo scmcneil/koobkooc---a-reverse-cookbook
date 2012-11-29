@@ -6,13 +6,16 @@ conn = sqlite3.connect('.koobkooc_database.db')
 cur = conn.cursor()
 # Initialize all the tables
 try:
-    cur.execute('create table if not exists recipes( id integer primary key autoincrement, name text unique, recipe_file text)')
+    cur.execute('create table if not exists recipes( id integer primary key autoincrement, type text, name text unique, recipe_file text)')
     cur.execute('create table if not exists meats( id integer primary key autoincrement, name text unique)')
     cur.execute('create table if not exists veggies( id integer primary key autoincrement, name text unique)')
     cur.execute('create table if not exists starches( id integer primary key, name text unique)')
+    cur.execute('create table if not exists ingredients( id integer primary key autoincrement, name text unique)')
     cur.execute('create table if not exists recipe_veggies( recipe_id integer, veggie_id integer)')
     cur.execute('create table if not exists recipe_starches( recipe_id integer, starch_id integer)')
     cur.execute('create table if not exists recipe_meats( recipe_id integer, meat_id integer)')
+    cur.execute('create table if not exists side_ingredients( recipe_id integer, ingredient_id integer)')
+    cur.execute('create table if not exists recipe_sides( main_id integer, side_id integer)')
     conn.commit()
 except:
     pass
@@ -24,38 +27,47 @@ cur.execute('insert or ignore into starches (id, name) values (3, "potatoes")')
 conn.commit()
 
 # Database functions
-# ADD
-def ADD():
-    ''' Adds a recipe into the database'''
+
+def ADD_MAIN():
+    ''' Adds a main dish to the database'''
     name = intermediary.get_name()
     meat = intermediary.get_meat()
     VEGGIES = intermediary.get_veggies()
     starch = intermediary.get_starch()
     recipe = intermediary.get_recipe()
+    dish_type = intermediary.get_type()
     # Put the name of the recipe and the file into the database
-    cur.execute('insert or ignore into recipes (name, recipe_file) values (?,?)', (name, recipe))
+    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?)', (name, dish_type, recipe))
     rid = get_recipe_id(name)
     # Try to put the meats and vegetables into the database in case they are not already there
-    VIDS = {}
     for veggie in VEGGIES.values():
         if veggie != '':
             add_veggie(veggie)
             id = get_veggie_id(veggie)
-            VIDS.update({veggie: id})
-    print(VIDS)
+            add_recipe_veggie(rid, id)
     cur.execute('insert or ignore into meats (name) values ("%s")' % meat)
     mid = get_meat_id(meat)
     sid = get_starch_id(starch)
-    print(sid)
     # Put the meat, vegetable, and starch relationships into the database
-    for value in VIDS.values():
-        add_recipe_veggie(rid, value)
     add_recipe_meat(rid, mid)
     add_recipe_starch(rid, sid)
     conn.commit()
-	
+
+def ADD_SIDE():
+    name = intermediary.get_name()
+    recipe = intermediary.get_recipe()
+    dish_type = intermediary.get_type()
+    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?)', (name, dish_type, recipe))
+    rid = get_recipe_id(name)
+    INGREDIENTS = intermediay.get_ingredients()
+    for ingred in INGREDIENTS.values():
+        if ingred != '':
+            add_ingredient(ingred)
+            id = get_ingredient_id(ingred)
+            add_side_ingredient(rid, id)
+
 def DELETE(recipe):
-    '''premenantly deletes a recipe from the database'''
+    '''permenantly deletes a recipe from the database'''
     rid = get_recipe_id(recipe)
     #get rid of the veggie relationships
     cur.execute('delete from recipe_veggies where recipe_id=%u' % rid)
@@ -67,31 +79,21 @@ def DELETE(recipe):
     cur.execute('delete from recipes where id=%u' % rid)
     conn.commit()
 
-def EDIT(recipe):
-    print('recipe: ', recipe)
+def EDIT_MAIN(recipe):
     rid = get_recipe_id(recipe)
-    #intermediary.set_id(rid)
-    print('rid: ', rid)
     id = intermediary.get_id()
-    print('get_id: ', id)
     name = get_recipe_name(id)
-    print('name: ', name)
     # Update the veggies
     VEGGIES = intermediary.get_veggies()
-    print('V: ', VEGGIES)
-    print(VEGGIES)
     VIDS = set()
     for veggie in VEGGIES.values():
         if veggie != '':
             add_veggie(veggie)
             VIDS.add(get_veggie_id(veggie))
     ORIGINAL = set(get_recipe_veggies(rid))
-    print('VIDS: ', VIDS)
-    print('ORIGINAL: ', ORIGINAL)
     if VIDS != ORIGINAL:
         # this should be a set of the veggies that need to be deleted
         OLD = ORIGINAL - VIDS
-        print('old: ', OLD)
         for old in OLD:
             cur.execute('delete from recipe_veggies where recipe_id=%1s and veggie_id=%2s' % (rid, old))
         conn.commit()
@@ -114,42 +116,34 @@ def EDIT(recipe):
         add_recipe_meat(rid, starch)
     # Update the recipe file
     recipe_file = intermediary.get_recipe()
-    print(recipe_file)
     if recipe_file != get_recipe_text(rid):
         cur.execute('update recipes set recipe_file="%s" where id=%u' % (recipe_file, rid))
     conn.commit()
     return
 
-def FIND(recipe):
-    '''finds the meat, veggies, and starch that goes with a recipe'''
+def FIND_MAIN(recipe):
+    '''finds the meat, veggies, and starch that go with a main dish recipe'''
     rid = get_recipe_id(recipe)
     intermediary.set_name(recipe)
-    print('rid: ', rid)
     #find the meat
     mid = get_recipe_meat(rid)
     if mid != 'None':
-        print('mid: ', mid)
         intermediary.set_meat(get_meat_name(get_recipe_meat(rid)))
-        print('meat: ', intermediary.get_meat())
     #find the veggies
     VEGGIES = []
     VIDS = get_recipe_veggies(rid)
     for vid in VIDS:
         VEGGIES.append(get_veggie_name(vid))
-    print('VIDS: ', VIDS, 'VEGGIES: ', VEGGIES)
     intermediary.set_veggies(VEGGIES)
     roar = intermediary.get_veggies()
-    print('veggies: ', roar)
     #find the starch
     sid = get_recipe_starch(rid)
-    print ('sid: ', sid)
     if sid != None:
         intermediary.set_starch(get_starch_name(sid))
     #find the recipe
     intermediary.set_recipe(get_recipe_text(recipe))
 
-def SEARCH(meat, VEGGIES, starch):
-    print('meat: ', meat, 'veggies: ', VEGGIES, 'starch: ', starch)
+def STRICT_SEARCH_MAIN(meat, VEGGIES, starch):
     num_veggies = len(VEGGIES)
     VIDS = set()
     for veggie in VEGGIES.values():
@@ -159,23 +153,18 @@ def SEARCH(meat, VEGGIES, starch):
     match_meat = set()
     for row in cur.execute('select recipe_id from recipe_meats where meat_id=%u' % mid):
         match_meat.add(row[0])
-    print('match_meat: ', match_meat)
     sid = get_starch_id(starch)
     match_starch = set()
     for row in cur.execute('select recipe_id from recipe_starches where starch_id=%u' % sid):
         match_starch.add(row[0])
-    print('match_starch: ', match_starch)
     match_meat_and_starch = match_meat.intersection(match_starch)
-    print('both: ', match_meat_and_starch)
     qualifying_recipes = set()
-    temp = list(VIDS)
     for id in match_meat_and_starch:
-        roar = set()
+        temp = set()
         for row in cur.execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
-            roar.add(row[0])
-        if roar == VIDS:
+            temp.add(row[0])
+        if temp == VIDS:
             qualifying_recipes.add(get_recipe_name(id))
-    print('qr: ', qualifying_recipes)
     return qualifying_recipes
 
 def get_recipe_names():
@@ -213,10 +202,24 @@ def get_recipe_text(recipe):
     for row in cur.execute('select recipe_file from recipes where name="%s"' % recipe):
         return row[0]
 
+def get_recipe_type(recipe):
+    for row in cur.execute('select type from recipes where name="%s"' % recipe):
+        return row[0]
+
 def add_veggie(veggie):
-    '''adds a vegetable to the  veggies table'''
+    '''adds a vegetable to the veggies table'''
     cur.execute('insert or ignore into veggies (name) values ("%s")' % veggie)
     conn.commit()
+
+def add_ingredient(ingredient):
+    '''adds an ingredient into the ingredients table'''
+    cur.execute('insert or ignore into ingredients (name) values ("%s")' % ingredient)
+    conn.commit()
+
+def get_ingredient_id(ingredient):
+    '''gets the ID of an ingredient'''
+    for row in cur.execute('select id from ingredients where name="%s"' % ingredient):
+        return row[0]
 	
 def get_veggie_id(veggie):
     '''gets the ID of a veggie'''
@@ -232,6 +235,11 @@ def get_starch_id(starch):
     '''gets the ID of a starch'''
     for row in cur.execute("select id from starches where name='%s'" % starch):
         return row[0]
+
+def add_side_ingredient(recipe, ingredient):
+    '''adds a side and ingredient relationship'''
+    cur.execute('insert into side_ingredients(recipe_id, ingredient_id) values (?,?)', (recipe, ingredient))
+    conn.commit()
 
 def add_recipe_veggie(recipe, veggie):
     '''adds a recipe and vegetable relationship the the proper table'''
@@ -276,4 +284,3 @@ def get_starch_name(starch_id):
     '''gets the name of a starch'''
     for row in cur.execute("select name from starches where id=%u" % starch_id):
         return row[0]
-

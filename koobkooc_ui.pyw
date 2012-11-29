@@ -152,9 +152,9 @@ class Screen4(QtGui.QWizardPage):
         self.starchRadio1 = QtGui.QRadioButton('&Rice', self)
         self.starchRadio2 = QtGui.QRadioButton('&Noodles', self)
         self.starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
-        setButton = QtGui.QPushButton('Set search parameters', self)
-        setButton.clicked.connect(self.set_parameters)
-        self.setLabel = QtGui.QLabel(self)
+        #setButton = QtGui.QPushButton('Set search parameters', self)
+        #setButton.clicked.connect(self.set_parameters)
+        #self.setLabel = QtGui.QLabel(self)
 
         nameEdit.textChanged[str].connect(self.name_changed)
         meatEdit.textChanged[str].connect(self.meat_changed)
@@ -183,10 +183,13 @@ class Screen4(QtGui.QWizardPage):
         grid.addWidget(self.starchRadio1, 8, 1)
         grid.addWidget(self.starchRadio2, 9, 1)
         grid.addWidget(self.starchRadio3, 10, 1)
-        grid.addWidget(setButton, 11, 0)
-        grid.addWidget(self.setLabel, 11, 1)
+        #grid.addWidget(setButton, 11, 0)
+        #grid.addWidget(self.setLabel, 11, 1)
         self.setLayout(grid)
         
+        self.nextId()
+
+
     #Take the input from the line-edits and sets it in the intermediary class
     def name_changed(self, text):
         intermediary.set_name(text)
@@ -206,14 +209,15 @@ class Screen4(QtGui.QWizardPage):
     def veggie4_changed(self, text):
         intermediary.set_veggie4(text)
 
-    def set_parameters(self):
+    #def set_parameters(self):
+    def nextId(self):
         if self.starchRadio1.isChecked() == True:
             intermediary.set_starch('Rice')
         elif self.starchRadio2.isChecked():
             intermediary.set_starch('Noodles')
         elif self.starchRadio3.isChecked():
             intermediary.set_starch('Potatoes')
-        self.setLabel.setText('Parameters set!')
+        #self.setLabel.setText('Parameters set!')
 
 class Screen5(QtGui.QWizardPage):
     def __init__(self, parent):
@@ -238,7 +242,7 @@ class Screen5(QtGui.QWizardPage):
         grid.addWidget(openFile, 5, 0)
         grid.addWidget(addButton, 6, 0)
         self.setLayout(grid)
-        self.nextId
+        self.nextId()
 
     def nextId(self):
         #Makes the 'Final' button appear
@@ -252,13 +256,13 @@ class Screen5(QtGui.QWizardPage):
         with f:        
             data = f.read()
             self.textEdit.setText(data)
-        self.nextId
+        self.nextId()
 
     def add_recipe(self):
         #add the recipe and parameters to the database
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
-        database.ADD()
+        database.ADD_MAIN()
 
 class Screen6(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -354,7 +358,7 @@ class Screen8(QtGui.QWizardPage):
 
     def listclicked(self, text):
         print('clicked:', text)
-        database.FIND(text)
+        database.FIND_MAIN(text)
         intermediary.set_id(database.get_recipe_id(text))
         print(intermediary.get_id())
         self.veggie1Edit.clear()
@@ -440,7 +444,7 @@ class Screen9(QtGui.QWizardPage):
         print('recipe name: ', recipe_name)
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
-        database.EDIT(recipe_name)
+        database.EDIT_MAIN(recipe_name)
 
     def fill(self):
         #fills in textEdit with the recipe text from the database
@@ -662,7 +666,7 @@ class Screen14(QtGui.QWizardPage):
         VEGGIES = intermediary.get_veggies()
         NUM = len(VEGGIES)
         STARCH = intermediary.get_starch()
-        RECIPES = database.SEARCH(MEAT, VEGGIES, STARCH)
+        RECIPES = database.STRICT_SEARCH_MAIN(MEAT, VEGGIES, STARCH)
         print(VEGGIES)
         print(RECIPES)
         if len(RECIPES) > 0:
@@ -674,7 +678,7 @@ class Screen14(QtGui.QWizardPage):
     def listclicked(self, item):
         recipe = str(self.recipes.currentItem().text())
         #recipe_text = database.Recipe_text(recipe)
-        database.FIND(recipe)
+        database.FIND_MAIN(recipe)
 
 class Screen15(QtGui.QWizardPage):
     def __init__(self, parent=None):
