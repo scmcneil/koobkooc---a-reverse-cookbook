@@ -6,7 +6,7 @@ conn = sqlite3.connect('.koobkooc_database.db')
 cur = conn.cursor()
 # Initialize all the tables
 try:
-    cur.execute('create table if not exists recipes( id integer primary key autoincrement, name text unique, recipe_file text)')
+    cur.execute('create table if not exists recipes( id integer primary key autoincrement, type text, name text unique, recipe_file text)')
     cur.execute('create table if not exists meats( id integer primary key autoincrement, name text unique)')
     cur.execute('create table if not exists veggies( id integer primary key autoincrement, name text unique)')
     cur.execute('create table if not exists starches( id integer primary key, name text unique)')
