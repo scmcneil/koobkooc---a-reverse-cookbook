@@ -150,15 +150,23 @@ def SEARCH_MAIN(meat, VEGGIES, starch, strict):
     for veggie in VEGGIES.values():
         if veggie != '':
             VIDS.add(get_veggie_id(veggie))
-    mid = get_meat_id(meat)
-    match_meat = set()
-    for row in cur.execute('select recipe_id from recipe_meats where meat_id=%u' % mid):
-        match_meat.add(row[0])
-    sid = get_starch_id(starch)
-    match_starch = set()
-    for row in cur.execute('select recipe_id from recipe_starches where starch_id=%u' % sid):
-        match_starch.add(row[0])
-    match_meat_and_starch = match_meat.intersection(match_starch)
+    if meat != 'none':
+        mid = get_meat_id(meat)
+        match_meat = set()
+        for row in cur.execute('select recipe_id from recipe_meats where meat_id=%u' % mid):
+            match_meat.add(row[0])
+
+    if starch != 'none':
+        sid = get_starch_id(starch)
+        match_starch = set()
+        for row in cur.execute('select recipe_id from recipe_starches where starch_id=%u' % sid):
+            match_starch.add(row[0])
+        if meat != 'none':
+            match_meat_and_starch = match_meat.intersection(match_starch)
+        elif meat == 'none':
+            match_meat_and_starch = match_starch
+    elif starch == 'none' and meat != 'none':
+        match_meat_and_starch = match_meat
     qualifying_recipes = set()
 
     for id in match_meat_and_starch:
