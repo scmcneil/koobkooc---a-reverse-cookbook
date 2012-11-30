@@ -19,6 +19,7 @@ class wizard(QtGui.QWizard):
     Select_recipe = 14
     View_reicpe = 15
     Construction_screen = 16
+    Set_side_parameters = 17
     def __init__(self, parent=None):
         super(wizard, self).__init__()
         self.resize(720,650)
@@ -26,21 +27,22 @@ class wizard(QtGui.QWizard):
         self.setWindowIcon(QtGui.QIcon(os.getcwd() + '/images/koobkooc.jpg'))
         self.setWizardStyle(QtGui.QWizard.ModernStyle)
         #Add the screens to the wizard
-        self.setPage(wizard.Open_screen, Screen1(self))
-        self.setPage(wizard.DB_function_screen, Screen2(self))
-        self.setPage(wizard.Type_to_add, Screen3(self))
-        self.setPage(wizard.Set_parameters, Screen4(self))
-        self.setPage(wizard.Set_recipe, Screen5(self))
-        self.setPage(wizard.Type_to_edit, Screen6(self))
-        self.setPage(wizard.Edit_parameters, Screen8(self))
-        self.setPage(wizard.Edit_recipe, Screen9(self))
-        self.setPage(wizard.Type_to_delete, Screen10(self))
-        self.setPage(wizard.Select_to_delete, Screen11(self))
-        self.setPage(wizard.Type_to_search, Screen12(self))
-        self.setPage(wizard.Select_parameters, Screen13(self))
-        self.setPage(wizard.Select_recipe, Screen14(self))
-        self.setPage(wizard.View_reicpe, Screen15(self))
+        self.setPage(wizard.Open_screen, OpenScreen(self))
+        self.setPage(wizard.DB_function_screen, DBFunctionScreen(self))
+        self.setPage(wizard.Type_to_add, TypeToAdd(self))
+        self.setPage(wizard.Set_parameters, SetMainParameters(self))
+        self.setPage(wizard.Set_recipe, SetRecipe(self))
+        self.setPage(wizard.Type_to_edit, TypeToEdit(self))
+        self.setPage(wizard.Edit_parameters, EditMainParameters(self))
+        self.setPage(wizard.Edit_recipe, EditRecipe(self))
+        self.setPage(wizard.Type_to_delete, TypeToDelete(self))
+        self.setPage(wizard.Select_to_delete, SelectToDelete(self))
+        self.setPage(wizard.Type_to_search, TypeToSearch(self))
+        self.setPage(wizard.Select_parameters, SelectMainParameters(self))
+        self.setPage(wizard.Select_recipe, SelectRecipe(self))
+        self.setPage(wizard.View_reicpe, ViewRecipe(self))
         self.setPage(wizard.Construction_screen, UnderConstruction(self))
+        self.setPage(wizard.Set_side_parameters, SetSideParameters(self))
         self.setStartId(1)
         
 class UnderConstruction(QtGui.QWizardPage):
@@ -51,10 +53,10 @@ class UnderConstruction(QtGui.QWizardPage):
         pic = QtGui.QLabel(self)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/under_construction.jpg"))
 
-class Screen1(QtGui.QWizardPage):
+class OpenScreen(QtGui.QWizardPage):
     #Screen that appears when the program is run
     def __init__(self, parent=None):
-        super(Screen1, self).__init__()
+        super(OpenScreen, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -74,9 +76,9 @@ class Screen1(QtGui.QWizardPage):
         else:
             return wizard.Construction_screen
 
-class Screen2(QtGui.QWizardPage):
+class DBFunctionScreen(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen2, self).__init__()
+        super(DBFunctionScreen, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -100,34 +102,36 @@ class Screen2(QtGui.QWizardPage):
         else:
             return wizard.Construction_screen
 
-class Screen3(QtGui.QWizardPage):
+class TypeToAdd(QtGui.QWizardPage):
     #Select the type of dish to add to the database
     def __init__(self, parent=None):
-        super(Screen3, self).__init__()
+        super(TypeToAdd, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What type of recipe would you like to add?", self)
         self.label.move(225, 250)
-        self.radio1 = QtGui.QRadioButton('&Main Dish', self)
-        self.radio1.move(225, 275)
-        self.radio2 = QtGui.QRadioButton('&Side Dish', self)
-        self.radio2.move(225, 300)
+        self.mainRadio = QtGui.QRadioButton('&Main Dish', self)
+        self.mainRadio.move(225, 275)
+        self.sideRadio = QtGui.QRadioButton('&Side Dish', self)
+        self.sideRadio.move(225, 300)
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.radio1.isChecked() == True:
+        if self.mainRadio.isChecked() == True:
+            intermediary.set_type('main')
             return wizard.Set_parameters
         #Side dishes not supported yet, so redirect to construction screen
-        elif self.radio2.isChecked() == True:
-            return wizard.Construction_screen
+        elif self.sideRadio.isChecked() == True:
+            intermediary.set_type('side')
+            return wizard.Set_side_parameters
         else:
-            return wizard.Construction_screen
+            return wizard.Set_parameters
 
-class Screen4(QtGui.QWizardPage):
+class SetMainParameters(QtGui.QWizardPage):
     #set the search parameters and name for the dish
     def __init__(self, parent=None):
-        super(Screen4, self).__init__()
+        super(SetMainParameters, self).__init__()
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
         spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
@@ -220,9 +224,92 @@ class Screen4(QtGui.QWizardPage):
         #self.setLabel.setText('Parameters set!')
         return wizard.Set_recipe
 
-class Screen5(QtGui.QWizardPage):
+class SetSideParameters(QtGui.QWizardPage):
     def __init__(self, parent):
-        super(Screen5, self).__init__()
+        super(SetSideParameters, self).__init__()
+        spacer = QtGui.QLabel(self)
+        spacer.setGeometry(0,0,10,225)
+        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
+        pic = QtGui.QLabel(self)
+        pic.setGeometry(0,0,700,225)
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
+        label = QtGui.QLabel('Add a Side Dish')
+        name = QtGui.QLabel('Recipe Name')
+        ingredient1 = QtGui.QLabel('Ingredient 1')
+        ingredient2 = QtGui.QLabel('Ingredient 2')
+        ingredient3 = QtGui.QLabel('Ingredient 3')
+        ingredient4 = QtGui.QLabel('Ingredient 4')
+        ingredient5 = QtGui.QLabel('Ingredient 5')
+        ingredient6 = QtGui.QLabel('Ingredient 6')
+        
+        nameEdit = QtGui.QLineEdit()
+        self.ingredient1Edit = QtGui.QLineEdit()
+        self.ingredient2Edit = QtGui.QLineEdit()
+        self.ingredient3Edit = QtGui.QLineEdit()
+        self.ingredient4Edit = QtGui.QLineEdit()
+        self.ingredient5Edit = QtGui.QLineEdit()
+        self.ingredient6Edit = QtGui.QLineEdit()
+
+        nameEdit.textChanged[str].connect(self.name_changed)
+        self.ingredient1Edit.textChanged[str].connect(self.ingredient1_changed)
+        self.ingredient2Edit.textChanged[str].connect(self.ingredient2_changed)
+        self.ingredient3Edit.textChanged[str].connect(self.ingredient3_changed)
+        self.ingredient4Edit.textChanged[str].connect(self.ingredient4_changed)
+        self.ingredient5Edit.textChanged[str].connect(self.ingredient5_changed)
+        self.ingredient6Edit.textChanged[str].connect(self.ingredient6_changed)
+
+        grid = QtGui.QGridLayout()
+        grid.setSpacing(10)
+        grid.addWidget(spacer, 0, 0)
+        grid.addWidget(label, 1, 0)
+        grid.addWidget(name, 2, 0)
+        grid.addWidget(nameEdit, 2, 1)
+        grid.addWidget(ingredient1, 4, 0)
+        grid.addWidget(self.ingredient1Edit, 4, 1)
+        grid.addWidget(ingredient2, 5, 0)
+        grid.addWidget(self.ingredient2Edit, 5, 1)
+        grid.addWidget(ingredient3, 6, 0)
+        grid.addWidget(self.ingredient3Edit, 6, 1)
+        grid.addWidget(ingredient4, 7, 0)
+        grid.addWidget(self.ingredient4Edit, 7, 1)
+        grid.addWidget(ingredient5, 8, 0)
+        grid.addWidget(self.ingredient5Edit, 8, 1)
+        grid.addWidget(ingredient6, 9, 0)
+        grid.addWidget(self.ingredient6Edit, 9, 1)
+        self.setLayout(grid)
+        self.nextId()
+        
+    def name_changed(self, text):
+        intermediary.set_name(text)
+        print(intermediary.get_name())
+
+    def ingredient1_changed(self, text):
+        intermediary.set_ingredient('1', text)
+
+    def ingredient2_changed(self, text):
+        intermediary.set_ingredient('2', text)
+
+    def ingredient3_changed(self, text):
+        intermediary.set_ingredient('3', text)
+
+    def ingredient4_changed(self, text):
+        intermediary.set_ingredient('4', text)
+
+    def ingredient5_changed(self, text):
+        intermediary.set_ingredient('5', text)
+
+    def ingredient6_changed(self, text):
+        intermediary.set_ingredient('6', text)
+
+    def nextId(self):
+        intermediary.set_type('side')
+        print(intermediary.get_ingredients())
+        return wizard.Set_recipe
+
+
+class SetRecipe(QtGui.QWizardPage):
+    def __init__(self, parent):
+        super(SetRecipe, self).__init__()
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
         spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
@@ -263,34 +350,39 @@ class Screen5(QtGui.QWizardPage):
         #add the recipe and parameters to the database
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
-        database.ADD_MAIN()
+        dish_type = intermediary.get_type()
+        print(dish_type)
+        if dish_type == 'main':
+            database.ADD_MAIN()
+        elif dish_type == 'side':
+            database.ADD_SIDE()
 
-class Screen6(QtGui.QWizardPage):
+class TypeToEdit(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen6, self).__init__()
+        super(TypeToEdit, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What type of recipe would you like to edit?", self)
         self.label.move(225, 250)
-        self.radio1 = QtGui.QRadioButton('&Main Dish', self)
-        self.radio1.move(225, 275)
-        self.radio2 = QtGui.QRadioButton('&Side Dish', self)
-        self.radio2.move(225, 300)
+        self.mainRadio = QtGui.QRadioButton('&Main Dish', self)
+        self.mainRadio.move(225, 275)
+        self.sideRadio = QtGui.QRadioButton('&Side Dish', self)
+        self.sideRadio.move(225, 300)
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.radio1.isChecked() == True:
+        if self.mainRadio.isChecked() == True:
             return wizard.Edit_parameters
         #Side dishes not supported yet, so redirect to construction screen
-        elif self.radio2.isChecked() == True:
+        elif self.sideRadio.isChecked() == True:
             return wizard.Construction_screen
         else:
             return wizard.Construction_screen
 
-class Screen8(QtGui.QWizardPage):
+class EditMainParameters(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen8, self).__init__()
+        super(EditMainParameters, self).__init__()
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
         spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
@@ -309,7 +401,7 @@ class Screen8(QtGui.QWizardPage):
         self.nameShow = QtGui.QComboBox(self)
         self.nameShow.addItem('---select---')
         self.nameShow.activated[str].connect(self.listclicked)
-        all_recipes = database.get_recipe_names()
+        all_recipes = database.get_recipe_names('main')
         if len(all_recipes) > 0:
             for x in all_recipes:
                 self.nameShow.addItem(x)
@@ -407,9 +499,9 @@ class Screen8(QtGui.QWizardPage):
             intermediary.set_starch('Potatoes')
         self.setLabel.setText('Parameters re-set!')
 
-class Screen9(QtGui.QWizardPage):
+class EditRecipe(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen9, self).__init__()
+        super(EditRecipe, self).__init__()
         self.initUI()
 
     def initUI(self):
@@ -449,37 +541,37 @@ class Screen9(QtGui.QWizardPage):
         recipe_text = intermediary.get_recipe()
         self.textEdit.insertPlainText(recipe_text)
 
-class Screen10(QtGui.QWizardPage):
+class TypeToDelete(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen10, self).__init__()
+        super(TypeToDelete, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What type of recipe would you like to delete?", self)
         self.label.move(225, 250)
-        self.radio1 = QtGui.QRadioButton('&Main Dish', self)
-        self.radio1.move(225, 275)
-        self.radio2 = QtGui.QRadioButton('&Side Dish', self)
-        self.radio2.move(225, 300)
+        self.mainRadio = QtGui.QRadioButton('&Main Dish', self)
+        self.mainRadio.move(225, 275)
+        self.sideRadio = QtGui.QRadioButton('&Side Dish', self)
+        self.sideRadio.move(225, 300)
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.radio1.isChecked() == True:
+        if self.mainRadio.isChecked() == True:
             return wizard.Select_to_delete
         #Side dishes not supported yet, so redirect to construction screen
-        elif self.radio2.isChecked() == True:
+        elif self.sideRadio.isChecked() == True:
             return wizard.Construction_screen
         else:
             return wizard.Construction_screen
 
-class Screen11(QtGui.QWizardPage):
+class SelectToDelete(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen11, self).__init__()
+        super(SelectToDelete, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListWidget()
-        all_recipes = database.get_recipe_names()
+        all_recipes = database.get_recipe_names(intermediary.get_type())
         if len(all_recipes) > 0:
             for x in all_recipes:
                 item = QtGui.QListWidgetItem(x)
@@ -512,7 +604,7 @@ class Screen11(QtGui.QWizardPage):
 
         #reset the list of recipes
         self.recipes.clear()
-        all_recipes = database.get_recipe_names()
+        all_recipes = database.get_recipe_names(intermediary.get_type())
         if len(all_recipes) > 0:
             for x in all_recipes:
                 item = QtGui.QListWidgetItem(x)
@@ -520,32 +612,32 @@ class Screen11(QtGui.QWizardPage):
         
         
 
-class Screen12(QtGui.QWizardPage):
+class TypeToSearch(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen12, self).__init__()
+        super(TypeToSearch, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.label = QtGui.QLabel("What type of recipe would you like to look up?", self)
         self.label.move(225, 250)
-        self.radio1 = QtGui.QRadioButton('&Main Dish', self)
-        self.radio1.move(225, 275)
-        self.radio2 = QtGui.QRadioButton('&Side Dish', self)
-        self.radio2.move(225, 300)
+        self.mainRadio = QtGui.QRadioButton('&Main Dish', self)
+        self.mainRadio.move(225, 275)
+        self.sideRadio = QtGui.QRadioButton('&Side Dish', self)
+        self.sideRadio.move(225, 300)
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.radio1.isChecked() == True:
+        if self.mainRadio.isChecked() == True:
             return wizard.Select_parameters
         #Side dishes not supported yet, so redirect to construction screen
-        elif self.radio2.isChecked() == True:
+        elif self.sideRadio.isChecked() == True:
             return wizard.Construction_screen
         else:
             return wizard.Construction_screen
 
-class Screen13(QtGui.QWizardPage):
+class SelectMainParameters(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen13, self).__init__()
+        super(SelectMainParameters, self).__init__()
         spacer = QtGui.QLabel(self)
         spacer.setGeometry(0,0,10,225)
         spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
@@ -637,9 +729,9 @@ class Screen13(QtGui.QWizardPage):
         return wizard.Select_recipe
 
 
-class Screen14(QtGui.QWizardPage):
+class SelectRecipe(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen14, self).__init__()
+        super(SelectRecipe, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
@@ -686,9 +778,9 @@ class Screen14(QtGui.QWizardPage):
         #recipe_text = database.Recipe_text(recipe)
         database.FIND_MAIN(recipe)
 
-class Screen15(QtGui.QWizardPage):
+class ViewRecipe(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(Screen15, self).__init__()
+        super(ViewRecipe, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))

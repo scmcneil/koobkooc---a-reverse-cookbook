@@ -58,9 +58,9 @@ def ADD_SIDE():
     name = intermediary.get_name()
     recipe = intermediary.get_recipe()
     dish_type = intermediary.get_type()
-    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?)', (name, dish_type, recipe))
+    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?,?)', (name, dish_type, recipe))
     rid = get_recipe_id(name)
-    INGREDIENTS = intermediay.get_ingredients()
+    INGREDIENTS = intermediary.get_ingredients()
     for ingred in INGREDIENTS.values():
         if ingred != '':
             add_ingredient(ingred)
@@ -175,10 +175,10 @@ def SEARCH_MAIN(meat, VEGGIES, starch, strict):
                                         if item[0].isdigit() else float('inf'), item))
     return qualifying_recipes
 
-def get_recipe_names():
-    '''gets the names of all the recipes in the database'''
+def get_recipe_names(dish_type):
+    '''gets the names of all the recipes of certain type in the database'''
     recipes = []
-    for row in cur.execute('select name from recipes order by name'):
+    for row in cur.execute('select name from recipes where type='%s' order by name' % dish_type):
         recipes.append(row[0])
     return recipes
 

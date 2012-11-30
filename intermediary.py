@@ -27,7 +27,7 @@ INGREDIENTS = {
                 '6': ''
               }
 
-def set_types(recipe_type):
+def set_type(recipe_type):
     global RECIPE_TYPE
     RECIPE_TYPE = recipe_type
 
@@ -40,32 +40,29 @@ def set_meat(meat):
     MEAT = str(meat).lower()
 
 def set_veggie1(veggie1):
-    #global VEGGIE1
-    #VEGGIE1 = str(veggie1).lower()
     global VEGGIES
     veg = str(veggie1).lower()
     VEGGIES.update({'1': veg})
 
 def set_veggie2(veggie2):
-    #global VEGGIE2
-    #VEGGIE2 = str(veggie2).lower()
     global VEGGIES
     veg = str(veggie2).lower()
     VEGGIES.update({'2': veg})
 
 def set_veggie3(veggie3):
-    #global VEGGIE3
-    #VEGGIE3 = str(veggie3).lower()
     global VEGGIES
     veg = str(veggie3).lower()
     VEGGIES.update({'3': veg})
 
 def set_veggie4(veggie4):
-    #global VEGGIE4
-    #VEGGIE4 = str(veggie4).lower()
     global VEGGIES
     veg = str(veggie4).lower()
     VEGGIES.update({'4': veg})
+
+def set_veggie(num, veggie):
+    global VEGGIES
+    veg = str(veggie).lower()
+    VEGGEIS.update({num: veg})
 
 def set_veggies(veggies):
     global VEGGIES
@@ -84,16 +81,17 @@ def set_id(id):
     global ID
     ID = id
 
+def set_ingredient(num, ingredient):
+    global INGREDIENTS
+    ingred = str(ingredient).lower()
+    INGREDIENTS.update({num: ingred})
+
 def set_ingredients(ingredients):
     global INGREDIENTS
     for x in range(1, len(ingredients)+1):
         INGREDIENTS.update({str(x): ingredients[x-1].lower()})
     
-def send_the_things():
-    VEGGIES = [VEGGIE1, VEGGIE2, VEGGIE3, VEGGIE4]
-    return NAME, MEAT, VEGGIES, STARCH, RECIPE
-
-def get_recipe_type():
+def get_type():
     return RECIPE_TYPE
 
 def get_name():
@@ -103,19 +101,6 @@ def get_meat():
     return MEAT
 
 def get_veggies():
-    return VEGGIES
-
-def get_veggies_for_search():
-    VEGGIES = []
-    if VEGGIE1 != 'none':
-        VEGGIES.append(VEGGIE1)
-    if VEGGIE2 != 'none':
-        VEGGIES.append(VEGGIE2)
-    if VEGGIE3 != 'none':
-        VEGGIES.append(VEGGIE3)
-    if VEGGIE4 != 'none':
-        VEGGIES.append(VEGGIE4)
-
     return VEGGIES
 
 def get_recipe():
@@ -129,5 +114,4 @@ def get_id():
 
 def get_ingredients():
     return INGREDIENTS
-
 
