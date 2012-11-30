@@ -170,15 +170,19 @@ def SEARCH_MAIN(meat, VEGGIES, starch, strict):
     qualifying_recipes = set()
 
     for id in match_meat_and_starch:
-        temp = set()
-        for row in cur.execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
-            temp.add(row[0])
-        if strict:
-            if temp == VIDS:
-                qualifying_recipes.add(get_recipe_name(id))
-        elif not strict:
-            if temp.intersection(VIDS) > set():
-                qualifying_recipes.add(get_recipe_name(id))
+        if VIDS > set():
+            temp = set()
+            for row in cur.execute('select veggie_id from recipe_veggies where recipe_id=%u' % id):
+                temp.add(row[0])
+            if strict:
+                if temp == VIDS:
+                    qualifying_recipes.add(get_recipe_name(id))
+            elif not strict:
+                if temp.intersection(VIDS) > set():
+                    qualifying_recipes.add(get_recipe_name(id))
+        elif VIDS == set():
+            qualifying_recipes.add(get_recipe_name(id))
+            
     qualifying_recipes = sorted(qualifying_recipes, key=lambda item: (int(item.partition(' ')[0])
                                         if item[0].isdigit() else float('inf'), item))
     return qualifying_recipes
