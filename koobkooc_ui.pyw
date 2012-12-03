@@ -10,7 +10,7 @@ class wizard(QtGui.QWizard):
     Set_parameters = 4
     Set_recipe = 5
     Type_to_edit = 6
-    Edit_parameters = 8
+    Edit_main_parameters = 8
     Edit_recipe = 9
     Type_to_delete = 10
     Select_to_delete = 11
@@ -20,6 +20,7 @@ class wizard(QtGui.QWizard):
     View_reicpe = 15
     Construction_screen = 16
     Set_side_parameters = 17
+    Edit_side_parameters = 18
     def __init__(self, parent=None):
         super(wizard, self).__init__()
         self.resize(720,650)
@@ -33,7 +34,7 @@ class wizard(QtGui.QWizard):
         self.setPage(wizard.Set_parameters, SetMainParameters(self))
         self.setPage(wizard.Set_recipe, SetRecipe(self))
         self.setPage(wizard.Type_to_edit, TypeToEdit(self))
-        self.setPage(wizard.Edit_parameters, EditMainParameters(self))
+        self.setPage(wizard.Edit_main_parameters, EditMainParameters(self))
         self.setPage(wizard.Edit_recipe, EditRecipe(self))
         self.setPage(wizard.Type_to_delete, TypeToDelete(self))
         self.setPage(wizard.Select_to_delete, SelectToDelete(self))
@@ -43,6 +44,7 @@ class wizard(QtGui.QWizard):
         self.setPage(wizard.View_reicpe, ViewRecipe(self))
         self.setPage(wizard.Construction_screen, UnderConstruction(self))
         self.setPage(wizard.Set_side_parameters, SetSideParameters(self))
+        self.setPage(wizard.Edit_side_parameters, EditSideParameters(self))
         self.setStartId(1)
         
 class UnderConstruction(QtGui.QWizardPage):
@@ -156,9 +158,6 @@ class SetMainParameters(QtGui.QWizardPage):
         self.starchRadio1 = QtGui.QRadioButton('&Rice', self)
         self.starchRadio2 = QtGui.QRadioButton('&Noodles', self)
         self.starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
-        #setButton = QtGui.QPushButton('Set search parameters', self)
-        #setButton.clicked.connect(self.set_parameters)
-        #self.setLabel = QtGui.QLabel(self)
 
         nameEdit.textChanged[str].connect(self.name_changed)
         meatEdit.textChanged[str].connect(self.meat_changed)
@@ -187,8 +186,6 @@ class SetMainParameters(QtGui.QWizardPage):
         grid.addWidget(self.starchRadio1, 8, 1)
         grid.addWidget(self.starchRadio2, 9, 1)
         grid.addWidget(self.starchRadio3, 10, 1)
-        #grid.addWidget(setButton, 11, 0)
-        #grid.addWidget(self.setLabel, 11, 1)
         self.setLayout(grid)
         
         self.nextId()
@@ -213,7 +210,6 @@ class SetMainParameters(QtGui.QWizardPage):
     def veggie4_changed(self, text):
         intermediary.set_veggie4(text)
 
-    #def set_parameters(self):
     def nextId(self):
         if self.starchRadio1.isChecked() == True:
             intermediary.set_starch('Rice')
@@ -221,7 +217,6 @@ class SetMainParameters(QtGui.QWizardPage):
             intermediary.set_starch('Noodles')
         elif self.starchRadio3.isChecked():
             intermediary.set_starch('Potatoes')
-        #self.setLabel.setText('Parameters set!')
         return wizard.Set_recipe
 
 class SetSideParameters(QtGui.QWizardPage):
@@ -281,7 +276,6 @@ class SetSideParameters(QtGui.QWizardPage):
         
     def name_changed(self, text):
         intermediary.set_name(text)
-        print(intermediary.get_name())
 
     def ingredient1_changed(self, text):
         intermediary.set_ingredient('1', text)
@@ -303,7 +297,6 @@ class SetSideParameters(QtGui.QWizardPage):
 
     def nextId(self):
         intermediary.set_type('side')
-        print(intermediary.get_ingredients())
         return wizard.Set_recipe
 
 
@@ -351,7 +344,6 @@ class SetRecipe(QtGui.QWizardPage):
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
         dish_type = intermediary.get_type()
-        print(dish_type)
         if dish_type == 'main':
             database.ADD_MAIN()
         elif dish_type == 'side':
@@ -373,12 +365,11 @@ class TypeToEdit(QtGui.QWizardPage):
     def nextId(self):
         #Determine which screen to go to next
         if self.mainRadio.isChecked() == True:
-            return wizard.Edit_parameters
-        #Side dishes not supported yet, so redirect to construction screen
+            return wizard.Edit_main_parameters
         elif self.sideRadio.isChecked() == True:
-            return wizard.Construction_screen
+            return wizard.Edit_side_parameters
         else:
-            return wizard.Construction_screen
+            return wizard.Edit_main_parameters
 
 class EditMainParameters(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -389,7 +380,7 @@ class EditMainParameters(QtGui.QWizardPage):
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
-        label = QtGui.QLabel('Edit a recipe')
+        label = QtGui.QLabel('Edit a main dish')
         name = QtGui.QLabel('Recipe Name')
         meat = QtGui.QLabel('Meat')
         veggie1 = QtGui.QLabel('Veggie 1')
@@ -414,10 +405,6 @@ class EditMainParameters(QtGui.QWizardPage):
         self.starchRadio1 = QtGui.QRadioButton('&Rice', self)
         self.starchRadio2 = QtGui.QRadioButton('&Noodles', self)
         self.starchRadio3 = QtGui.QRadioButton('&Potatoes', self)
-
-        setButton = QtGui.QPushButton('Re-set search parameters', self)
-        setButton.clicked.connect(self.set_parameters)
-        self.setLabel = QtGui.QLabel(self)
         
         self.meatEdit.textChanged[str].connect(self.meat_changed)
         self.veggie1Edit.textChanged[str].connect(self.veggie1_changed)
@@ -445,8 +432,6 @@ class EditMainParameters(QtGui.QWizardPage):
         grid.addWidget(self.starchRadio1, 8, 1)
         grid.addWidget(self.starchRadio2, 9, 1)
         grid.addWidget(self.starchRadio3, 10, 1)
-        grid.addWidget(setButton, 11, 0)
-        grid.addWidget(self.setLabel, 11, 1)
         self.setLayout(grid)
 
     def listclicked(self, text):
@@ -490,14 +475,120 @@ class EditMainParameters(QtGui.QWizardPage):
     def veggie4_changed(self, text):
         intermediary.set_veggie4(text)
 
-    def set_parameters(self):
-        if self.starchRadio1.isChecked() == True:
+    def nextId(self):
+        if self.starchRadio1.isChecked():
             intermediary.set_starch('Rice')
         elif self.starchRadio2.isChecked():
             intermediary.set_starch('Noodles')
         elif self.starchRadio3.isChecked():
             intermediary.set_starch('Potatoes')
-        self.setLabel.setText('Parameters re-set!')
+        return wizard.Edit_recipe
+
+class EditSideParameters(QtGui.QWizardPage):
+    def __init__(self, parent=None):
+        super(EditSideParameters, self).__init__()
+        spacer = QtGui.QLabel(self)
+        spacer.setGeometry(0,0,10,225)
+        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
+        pic = QtGui.QLabel(self)
+        pic.setGeometry(0,0,700,225)
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
+        label = QtGui.QLabel('Edit a side dish')
+        name = QtGui.QLabel('Recipe Name')
+        ingredient1 = QtGui.QLabel('Ingredient 1')
+        ingredient2 = QtGui.QLabel('Ingredient 2')
+        ingredient3 = QtGui.QLabel('Ingredient 3')
+        ingredient4 = QtGui.QLabel('Ingredient 4')
+        ingredient5 = QtGui.QLabel('Ingredient 5')
+        ingredient6 = QtGui.QLabel('Ingredient 6')
+        
+        self.nameShow = QtGui.QComboBox(self)
+        self.nameShow.addItem('---select---')
+        self.nameShow.activated[str].connect(self.listclicked)
+        all_recipes = database.get_recipe_names('side')
+        print(all_recipes)
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                self.nameShow.addItem(x)
+        
+        self.ingredient1Edit = QtGui.QLineEdit()
+        self.ingredient2Edit = QtGui.QLineEdit()
+        self.ingredient3Edit = QtGui.QLineEdit()
+        self.ingredient4Edit = QtGui.QLineEdit()
+        self.ingredient5Edit = QtGui.QLineEdit()
+        self.ingredient6Edit = QtGui.QLineEdit()
+        
+        self.ingredient1Edit.textChanged[str].connect(self.ingredient1_changed)
+        self.ingredient2Edit.textChanged[str].connect(self.ingredient2_changed)
+        self.ingredient3Edit.textChanged[str].connect(self.ingredient3_changed)
+        self.ingredient4Edit.textChanged[str].connect(self.ingredient4_changed)
+        self.ingredient5Edit.textChanged[str].connect(self.ingredient5_changed)
+        self.ingredient6Edit.textChanged[str].connect(self.ingredient6_changed)
+
+        grid = QtGui.QGridLayout()
+        grid.setSpacing(10)
+        grid.addWidget(spacer, 0, 0)
+        grid.addWidget(label, 1, 0)
+        grid.addWidget(name, 2, 0)
+        grid.addWidget(self.nameShow, 2, 1)
+        grid.addWidget(ingredient1, 4, 0)
+        grid.addWidget(self.ingredient1Edit, 4, 1)
+        grid.addWidget(ingredient2, 5, 0)
+        grid.addWidget(self.ingredient2Edit, 5, 1)
+        grid.addWidget(ingredient3, 6, 0)
+        grid.addWidget(self.ingredient3Edit, 6, 1)
+        grid.addWidget(ingredient4, 7, 0)
+        grid.addWidget(self.ingredient4Edit, 7, 1)
+        grid.addWidget(ingredient5, 8, 0)
+        grid.addWidget(self.ingredient5Edit, 8, 1)
+        grid.addWidget(ingredient6, 9, 0)
+        grid.addWidget(self.ingredient6Edit, 9, 1)
+        self.setLayout(grid)
+        self.nextId()
+
+    def listclicked(self, text):
+        database.FIND_SIDE(text)
+        intermediary.set_id(database.get_recipe_id(text))
+        self.ingredient1Edit.clear()
+        self.ingredient2Edit.clear()
+        self.ingredient3Edit.clear()
+        self.ingredient4Edit.clear()
+        self.ingredient5Edit.clear()
+        self.ingredient6Edit.clear()
+        INGREDIENTS = intermediary.get_ingredients()
+        if INGREDIENTS['1'] != '':
+            self.ingredient1Edit.setText(INGREDIENTS['1'].title())
+        if INGREDIENTS['2'] != '':
+            self.ingredient2Edit.setText(INGREDIENTS['2'].title())
+        if INGREDIENTS['3'] != '':
+            self.ingredient3Edit.setText(INGREDIENTS['3'].title())
+        if INGREDIENTS['4'] != '':
+            self.ingredient4Edit.setText(INGREDIENTS['4'].title())
+        if INGREDIENTS['5'] != '':
+            self.ingredient5Edit.setText(INGREDIENTS['5'].title())
+        if INGREDIENTS['6'] != '':
+            self.ingredient6Edit.setText(INGREDIENTS['6'].title())
+
+    def ingredient1_changed(self, text):
+        intermediary.set_ingredient('1', text)
+
+    def ingredient2_changed(self, text):
+        intermediary.set_ingredient('2', text)
+
+    def ingredient3_changed(self, text):
+        intermediary.set_ingredient('3', text)
+
+    def ingredient4_changed(self, text):
+        intermediary.set_ingredient('4', text)
+
+    def ingredient5_changed(self, text):
+        intermediary.set_ingredient('5', text)
+
+    def ingredient6_changed(self, text):
+        intermediary.set_ingredient('6', text)
+
+    def nextId(self):
+        return wizard.Edit_recipe
 
 class EditRecipe(QtGui.QWizardPage):
     def __init__(self, parent=None):
