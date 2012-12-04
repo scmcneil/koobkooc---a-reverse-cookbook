@@ -26,6 +26,10 @@ INGREDIENTS = {
                 '5': '',
                 '6': ''
               }
+RELATIONSHIP = {
+                 'SIDE': '',
+                 'MAIN': ''
+               }
 
 def set_type(recipe_type):
     global RECIPE_TYPE
@@ -90,6 +94,10 @@ def set_ingredients(ingredients):
     global INGREDIENTS
     for x in range(1, len(ingredients)+1):
         INGREDIENTS.update({str(x): ingredients[x-1].lower()})
+
+def set_relationship(side, main):
+    global RELATIONSHIP
+    RELATIONSHIP.update({'SIDE': side, 'MAIN': main})
     
 def get_type():
     return RECIPE_TYPE
@@ -114,4 +122,6 @@ def get_id():
 
 def get_ingredients():
     return INGREDIENTS
+def get_relationship():
+    return RELATIONSHIP
 

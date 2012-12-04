@@ -23,6 +23,7 @@ class wizard(QtGui.QWizard):
     Edit_side_parameters = 18
     Select_side_to_delete = 19
     Select_side_parameters = 20
+    Set_side_dish_relationship = 21
     def __init__(self, parent=None):
         super(wizard, self).__init__()
         self.resize(720,650)
@@ -49,6 +50,7 @@ class wizard(QtGui.QWizard):
         self.setPage(wizard.Edit_side_parameters, EditSideParameters(self))
         self.setPage(wizard.Select_side_to_delete, SelectSideToDelete(self))
         self.setPage(wizard.Select_side_parameters, SelectSideParameters(self))
+        self.setPage(wizard.Set_side_dish_relationship, SetSideDishRelationship(self))
         self.setStartId(1)
         
 class UnderConstruction(QtGui.QWizardPage):
@@ -75,12 +77,12 @@ class OpenScreen(QtGui.QWizardPage):
         self.check2.move(225, 300)
         self.nextId()
     def nextId(self):
-        if self.check1.isChecked() == True:
+        if self.check1.isChecked():
             return wizard.DB_function_screen
-        elif self.check2.isChecked() == True:
+        elif self.check2.isChecked():
             return wizard.Type_to_search
         else:
-            return wizard.Construction_screen
+            return wizard.Type_to_search
 
 class DBFunctionScreen(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -99,11 +101,11 @@ class DBFunctionScreen(QtGui.QWizardPage):
         self.check3.move(225, 325)
     def nextId(self):
         #Determine which screen to go to next
-        if self.check1.isChecked() == True:
+        if self.check1.isChecked():
             return wizard.Type_to_add
-        elif self.check2.isChecked() == True:
+        elif self.check2.isChecked():
             return wizard.Type_to_edit
-        elif self.check3.isChecked() == True:
+        elif self.check3.isChecked():
             return wizard.Type_to_delete
         else:
             return wizard.Construction_screen
@@ -124,11 +126,11 @@ class TypeToAdd(QtGui.QWizardPage):
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.mainRadio.isChecked() == True:
+        if self.mainRadio.isChecked():
             intermediary.set_type('main')
             return wizard.Set_parameters
         #Side dishes not supported yet, so redirect to construction screen
-        elif self.sideRadio.isChecked() == True:
+        elif self.sideRadio.isChecked():
             intermediary.set_type('side')
             return wizard.Set_side_parameters
         else:
@@ -329,8 +331,12 @@ class SetRecipe(QtGui.QWizardPage):
         self.nextId()
 
     def nextId(self):
-        #Makes the 'Final' button appear
-        return -1
+        dish_type =  intermediary.get_type()
+        if dish_type == 'main':
+            #Makes the 'Final' button appear
+            return -1
+        elif dish_type == 'side':
+            return wizard.Set_side_dish_relationship
     
     def showDialog(self):
         #Create a pop-up file browser to select a file to open
@@ -351,6 +357,53 @@ class SetRecipe(QtGui.QWizardPage):
             database.ADD_MAIN()
         elif dish_type == 'side':
             database.ADD_SIDE()
+
+class SetSideDishRelationship(QtGui.QWizardPage):
+    def __init__(self, parent=None):
+        super(SetSideDishRelationship, self).__init__()
+        pic = QtGui.QLabel(self)
+        pic.setGeometry(0,0,700,225)
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
+        self.recipes = QtGui.QListWidget()
+        all_recipes = database.get_recipe_names('main')
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                item = QtGui.QListWidgetItem(x)
+                self.recipes.addItem(item)
+        self.recipes.clicked.connect(self.listclicked)
+        label = QtGui.QLabel('Select a main dish to delete')
+        addButton = QtGui.QPushButton('&Add Relationship')
+        addButton.clicked.connect(self.add_relationship)
+        grid = QtGui.QGridLayout()
+        grid.setSpacing(10)
+        grid.addWidget(pic, 1, 0)
+        grid.addWidget(label, 2, 0)
+        grid.addWidget(self.recipes, 3, 0, 4, 0)
+        grid.addWidget(addButton, 7, 0)
+        self.setLayout(grid)
+        self.nextId()
+
+    def nextId(self):
+        #Makes the 'Final' button appear
+        return -1
+
+    def listclicked(self, item):
+        #Get the name of the recipe to be deleted
+        recipe = str(self.recipes.currentItem().text()).lower()
+        intermediary.set_relationship(intermediary.get_name(), recipe)
+
+    def add_relationship(self):
+        relation = intermediary.get_relationship()
+        database.ADD_RELATIONSHIP(relation)
+
+        #reset the list of recipes
+        self.recipes.clear()
+        all_recipes = database.get_recipes_not_related(database.get_recipe_id(intermediary.get_name()))
+        print(all_recipes)
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                item = QtGui.QListWidgetItem(database.get_recipe_name(x))
+                self.recipes.addItem(item)
 
 class TypeToEdit(QtGui.QWizardPage):
     def __init__(self, parent=None):

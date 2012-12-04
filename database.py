@@ -247,7 +247,11 @@ def SEARCH_SIDE(ingredients, strict):
                                         if item[0].isdigit() else float('inf'), item))
     return qualifying_recipes
                 
-
+def ADD_RELATIONSHIP(relation):
+    mid = get_recipe_id(relation['MAIN'])
+    sid = get_recipe_id(relation['SIDE'])
+    add_recipe_side(mid, sid)
+    
 
 def get_recipe_names(dish_type):
     '''gets the names of all the recipes of certain type in the database'''
@@ -352,6 +356,10 @@ def add_recipe_starch(recipe, starch):
     cur.execute('insert into recipe_starches (recipe_id, starch_id) values (?,?)', (recipe, starch))
     conn.commit()
 
+def add_recipe_side(main, side):
+    cur.execute('insert into recipe_sides (main_id, side_id) values (?,?)', (main, side))
+    conn.commit()
+
 def get_recipe_meat(recipe_id):
     for row in cur.execute('select meat_id from recipe_meats where recipe_id=%u' % recipe_id):
         return row[0]
@@ -386,3 +394,13 @@ def get_starch_name(starch_id):
     '''gets the name of a starch'''
     for row in cur.execute("select name from starches where id=%u" % starch_id):
         return row[0]
+def get_recipes_not_related(side):
+    RECIPES = set()
+    temp = get_recipe_names('main')
+    for x in temp:
+        RECIPES.add(get_recipe_id(x))
+    RELATED = set()
+    for row in cur.execute('select main_id from recipe_sides where side_id=%u' % side):
+        RELATED.add(row[0])
+    NOTRELATED = RECIPES - RELATED
+    return NOTRELATED
