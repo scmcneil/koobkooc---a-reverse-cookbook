@@ -440,6 +440,7 @@ class EditMainParameters(QtGui.QWizardPage):
     def listclicked(self, text):
         database.FIND_MAIN(text)
         intermediary.set_id(database.get_recipe_id(text))
+        intermediary.set_type('main')
         self.veggie1Edit.clear()
         self.veggie2Edit.clear()
         self.veggie3Edit.clear()
@@ -551,6 +552,7 @@ class EditSideParameters(QtGui.QWizardPage):
     def listclicked(self, text):
         database.FIND_SIDE(text)
         intermediary.set_id(database.get_recipe_id(text))
+        intermediary.set_type('side')
         self.ingredient1Edit.clear()
         self.ingredient2Edit.clear()
         self.ingredient3Edit.clear()
@@ -626,7 +628,10 @@ class EditRecipe(QtGui.QWizardPage):
         recipe_name = intermediary.get_name()
         recipe = self.textEdit.toPlainText()
         intermediary.set_recipe(recipe)
-        database.EDIT_MAIN(recipe_name)
+        if intermediary.get_type() == 'main':
+	        database.EDIT_MAIN(recipe_name)
+        elif intermediary.get_type() == 'side':
+            database.EDIT_SIDE(recipe_name)
 
     def fill(self):
         #fills in textEdit with the recipe text from the database
@@ -958,6 +963,7 @@ class SelectRecipe(QtGui.QWizardPage):
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListWidget()
+        intermediary.set_type('side')
         label = QtGui.QLabel('Select a recipe to view')
         self.searchButton = QtGui.QPushButton('Run Search', self)
         self.searchButton.clicked.connect(self.search)

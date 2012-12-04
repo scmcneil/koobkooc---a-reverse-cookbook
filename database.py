@@ -123,6 +123,27 @@ def EDIT_MAIN(recipe):
     conn.commit()
     return
 
+def EDIT_SIDE(recipe):
+    rid = get_recipe_id(recipe)
+    INGREDIENTS = intermediary.get_ingredients()
+    IIDS = set()
+    for ingred in INGREDIENTS.values():
+        if ingred != '':
+            add_ingredient(ingred)
+            IIDS.add(get_ingredient_id(ingred))
+    ORIGINAL = set(get_side_ingredients(rid))
+    if IIDS != ORIGINAL:
+        OLD = ORIGINAL - IIDS
+        for old in OLD:
+            cur.execute('delete from side_ingredients where recipe_id=%1s and ingredient_id=%2s' % (rid, old))
+        IIDS = IIDS - ORIGINAL
+        for iid in IIDS:
+            add_side_ingredient(rid, iid)
+    recipe_file = intermediary.get_recipe()
+    if recipe_file != get_recipe_text(rid):
+        cur.execute('update recipes set recipe_file="%s" where id=%u' % (recipe_file, rid))
+    conn.commit()
+
 def FIND_MAIN(recipe):
     '''finds the meat, veggies, and starch that go with a main dish recipe'''
     rid = get_recipe_id(recipe)
