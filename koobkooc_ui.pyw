@@ -13,14 +13,16 @@ class wizard(QtGui.QWizard):
     Edit_main_parameters = 8
     Edit_recipe = 9
     Type_to_delete = 10
-    Select_to_delete = 11
+    Select_main_to_delete = 11
     Type_to_search = 12
-    Select_parameters = 13
+    Select_main_parameters = 13
     Select_recipe = 14
     View_reicpe = 15
     Construction_screen = 16
     Set_side_parameters = 17
     Edit_side_parameters = 18
+    Select_side_to_delete = 19
+    Select_side_parameters = 20
     def __init__(self, parent=None):
         super(wizard, self).__init__()
         self.resize(720,650)
@@ -37,14 +39,16 @@ class wizard(QtGui.QWizard):
         self.setPage(wizard.Edit_main_parameters, EditMainParameters(self))
         self.setPage(wizard.Edit_recipe, EditRecipe(self))
         self.setPage(wizard.Type_to_delete, TypeToDelete(self))
-        self.setPage(wizard.Select_to_delete, SelectToDelete(self))
+        self.setPage(wizard.Select_main_to_delete, SelectMainToDelete(self))
         self.setPage(wizard.Type_to_search, TypeToSearch(self))
-        self.setPage(wizard.Select_parameters, SelectMainParameters(self))
+        self.setPage(wizard.Select_main_parameters, SelectMainParameters(self))
         self.setPage(wizard.Select_recipe, SelectRecipe(self))
         self.setPage(wizard.View_reicpe, ViewRecipe(self))
         self.setPage(wizard.Construction_screen, UnderConstruction(self))
         self.setPage(wizard.Set_side_parameters, SetSideParameters(self))
         self.setPage(wizard.Edit_side_parameters, EditSideParameters(self))
+        self.setPage(wizard.Select_side_to_delete, SelectSideToDelete(self))
+        self.setPage(wizard.Select_side_parameters, SelectSideParameters(self))
         self.setStartId(1)
         
 class UnderConstruction(QtGui.QWizardPage):
@@ -190,7 +194,6 @@ class SetMainParameters(QtGui.QWizardPage):
         
         self.nextId()
 
-
     #Take the input from the line-edits and sets it in the intermediary class
     def name_changed(self, text):
         intermediary.set_name(text)
@@ -211,7 +214,7 @@ class SetMainParameters(QtGui.QWizardPage):
         intermediary.set_veggie4(text)
 
     def nextId(self):
-        if self.starchRadio1.isChecked() == True:
+        if self.starchRadio1.isChecked():
             intermediary.set_starch('Rice')
         elif self.starchRadio2.isChecked():
             intermediary.set_starch('Noodles')
@@ -364,9 +367,9 @@ class TypeToEdit(QtGui.QWizardPage):
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.mainRadio.isChecked() == True:
+        if self.mainRadio.isChecked():
             return wizard.Edit_main_parameters
-        elif self.sideRadio.isChecked() == True:
+        elif self.sideRadio.isChecked():
             return wizard.Edit_side_parameters
         else:
             return wizard.Edit_main_parameters
@@ -506,7 +509,6 @@ class EditSideParameters(QtGui.QWizardPage):
         self.nameShow.addItem('---select---')
         self.nameShow.activated[str].connect(self.listclicked)
         all_recipes = database.get_recipe_names('side')
-        print(all_recipes)
         if len(all_recipes) > 0:
             for x in all_recipes:
                 self.nameShow.addItem(x)
@@ -647,28 +649,28 @@ class TypeToDelete(QtGui.QWizardPage):
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.mainRadio.isChecked() == True:
-            return wizard.Select_to_delete
-        #Side dishes not supported yet, so redirect to construction screen
-        elif self.sideRadio.isChecked() == True:
-            return wizard.Construction_screen
+        if self.mainRadio.isChecked():
+            intermediary.set_type('main')
+            return wizard.Select_main_to_delete
+        elif self.sideRadio.isChecked():
+            return wizard.Select_side_to_delete
         else:
-            return wizard.Construction_screen
+            return wizard.Select_main_to_delete
 
-class SelectToDelete(QtGui.QWizardPage):
+class SelectMainToDelete(QtGui.QWizardPage):
     def __init__(self, parent=None):
-        super(SelectToDelete, self).__init__()
+        super(SelectMainToDelete, self).__init__()
         pic = QtGui.QLabel(self)
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListWidget()
-        all_recipes = database.get_recipe_names(intermediary.get_type())
+        all_recipes = database.get_recipe_names('main')
         if len(all_recipes) > 0:
             for x in all_recipes:
                 item = QtGui.QListWidgetItem(x)
                 self.recipes.addItem(item)
         self.recipes.clicked.connect(self.listclicked)
-        label = QtGui.QLabel('Select a recipe to delete')
+        label = QtGui.QLabel('Select a main dish to delete')
         deleteButton = QtGui.QPushButton('&Delete')
         deleteButton.clicked.connect(self.delete_recipe)
         grid = QtGui.QGridLayout()
@@ -686,7 +688,7 @@ class SelectToDelete(QtGui.QWizardPage):
 
     def listclicked(self, item):
         #Get the name of the recipe to be deleted
-        recipe = self.recipes.currentItem().text().lower()
+        recipe = str(self.recipes.currentItem().text()).lower()
         intermediary.set_name(recipe)
 
     def delete_recipe(self):
@@ -695,13 +697,56 @@ class SelectToDelete(QtGui.QWizardPage):
 
         #reset the list of recipes
         self.recipes.clear()
-        all_recipes = database.get_recipe_names(intermediary.get_type())
+        all_recipes = database.get_recipe_names('main')
         if len(all_recipes) > 0:
             for x in all_recipes:
                 item = QtGui.QListWidgetItem(x)
                 self.recipes.addItem(item)
         
-        
+class SelectSideToDelete(QtGui.QWizardPage):
+    def __init__(self, parent=None):
+        super(SelectSideToDelete, self).__init__()
+        pic = QtGui.QLabel(self)
+        pic.setGeometry(0,0,700,225)
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
+        self.recipes = QtGui.QListWidget()
+        all_recipes = database.get_recipe_names('side')
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                item = QtGui.QListWidgetItem(x)
+                self.recipes.addItem(item)
+        self.recipes.clicked.connect(self.listclicked)
+        label = QtGui.QLabel('Select a side dish to delete')
+        deleteButton = QtGui.QPushButton('&Delete')
+        deleteButton.clicked.connect(self.delete_recipe)
+        grid = QtGui.QGridLayout()
+        grid.setSpacing(10)
+        grid.addWidget(pic, 1, 0)
+        grid.addWidget(label, 2, 0)
+        grid.addWidget(self.recipes, 3, 0, 4, 0)
+        grid.addWidget(deleteButton, 7, 0)
+        self.setLayout(grid)
+        self.nextId()
+
+    def nextId(self):
+        #Makes the 'Final' button appear
+        return -1
+
+    def listclicked(self, item):
+        #Get the name of the recipe to be deleted
+        recipe = str(self.recipes.currentItem().text()).lower()
+        intermediary.set_name(recipe)
+
+    def delete_recipe(self):
+        recipe = intermediary.get_name()
+        database.DELETE(recipe)
+        #reset the list of recipes
+        self.recipes.clear()
+        all_recipes = database.get_recipe_names('side')
+        if len(all_recipes) > 0:
+            for x in all_recipes:
+                item = QtGui.QListWidgetItem(x)
+                self.recipes.addItem(item)
 
 class TypeToSearch(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -718,13 +763,12 @@ class TypeToSearch(QtGui.QWizardPage):
 
     def nextId(self):
         #Determine which screen to go to next
-        if self.mainRadio.isChecked() == True:
-            return wizard.Select_parameters
-        #Side dishes not supported yet, so redirect to construction screen
-        elif self.sideRadio.isChecked() == True:
-            return wizard.Construction_screen
+        if self.mainRadio.isChecked():
+            return wizard.Select_main_parameters
+        elif self.sideRadio.isChecked():
+            return wizard.Select_side_parameters
         else:
-            return wizard.Construction_screen
+            return wizard.Select_main_parameters
 
 class SelectMainParameters(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -811,6 +855,7 @@ class SelectMainParameters(QtGui.QWizardPage):
             intermediary.set_veggie4(text)
 
     def nextId(self):
+        intermediary.set_type('main')
         if self.starchRadio1.isChecked() == True:
             intermediary.set_starch('rice')
         elif self.starchRadio2.isChecked() == True:
@@ -819,6 +864,92 @@ class SelectMainParameters(QtGui.QWizardPage):
             intermediary.set_starch('potatoes')
         return wizard.Select_recipe
 
+class SelectSideParameters(QtGui.QWizardPage):
+    def __init__(self, parent=None):
+        super(SelectSideParameters, self).__init__()
+        spacer = QtGui.QLabel(self)
+        spacer.setGeometry(0,0,10,225)
+        spacer.setPixmap(QtGui.QPixmap(os.getcwd() + '/images/spacer.jpg'))
+        pic = QtGui.QLabel(self)
+        pic.setGeometry(0,0,700,225)
+        pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
+        label = QtGui.QLabel('Find a recipe')
+        ingredient1 = QtGui.QLabel('Ingredient 1')
+        ingredient2 = QtGui.QLabel('Ingredient 2')
+        ingredient3 = QtGui.QLabel('Ingredient 3')
+        ingredient4 = QtGui.QLabel('Ingredient 4')
+        ingredient5 = QtGui.QLabel('Ingredient 5')
+        ingredient6 = QtGui.QLabel('Ingredient 6')
+
+        ingredient1Select = QtGui.QComboBox(self)
+        ingredient1Select.activated[str].connect(self.ingredient1Selected)
+        ingredient1Select.addItem('---select---')
+        ingredient2Select = QtGui.QComboBox(self)
+        ingredient2Select.activated[str].connect(self.ingredient2Selected)
+        ingredient2Select.addItem('---select---')
+        ingredient3Select = QtGui.QComboBox(self)
+        ingredient3Select.activated[str].connect(self.ingredient3Selected)
+        ingredient3Select.addItem('---select---')
+        ingredient4Select = QtGui.QComboBox(self)
+        ingredient4Select.activated[str].connect(self.ingredient4Selected)
+        ingredient4Select.addItem('---select---')
+        ingredient5Select = QtGui.QComboBox(self)
+        ingredient5Select.activated[str].connect(self.ingredient5Selected)
+        ingredient5Select.addItem('---select---')
+        ingredient6Select = QtGui.QComboBox(self)
+        ingredient6Select.activated[str].connect(self.ingredient6Selected)
+        ingredient6Select.addItem('---select---')
+        INGREDIENTS = database.get_ingredient_names()
+        for x in INGREDIENTS:
+            ingredient1Select.addItem(x)
+            ingredient2Select.addItem(x)
+            ingredient3Select.addItem(x)
+            ingredient4Select.addItem(x)
+            ingredient5Select.addItem(x)
+            ingredient6Select.addItem(x)
+
+        grid = QtGui.QGridLayout()
+        grid.setSpacing(10)
+        grid.addWidget(spacer, 0, 0)
+        grid.addWidget(label, 1, 0)
+        grid.addWidget(ingredient1, 4, 0)
+        grid.addWidget(ingredient1Select, 4, 1)
+        grid.addWidget(ingredient2, 5, 0)
+        grid.addWidget(ingredient2Select, 5, 1)
+        grid.addWidget(ingredient3, 6, 0)
+        grid.addWidget(ingredient3Select, 6, 1)
+        grid.addWidget(ingredient4, 7, 0)
+        grid.addWidget(ingredient4Select, 7, 1)
+        grid.addWidget(ingredient5, 8, 0)
+        grid.addWidget(ingredient5Select, 8, 1)
+        grid.addWidget(ingredient6, 9, 0)
+        grid.addWidget(ingredient6Select, 9, 1)
+        self.setLayout(grid)
+
+        self.nextId()
+
+    def ingredient1Selected(self, text):
+        if text != '---select---':
+            intermediary.set_ingredient('1', text) 
+    def ingredient2Selected(self, text):
+        if text != '---select---':
+            intermediary.set_ingredient('2', text)  
+    def ingredient3Selected(self, text):
+        if text != '---select---':
+            intermediary.set_ingredient('3', text)  
+    def ingredient4Selected(self, text):
+        if text != '---select---':
+            intermediary.set_ingredient('4', text) 
+    def ingredient5Selected(self, text):
+        if text != '---select---':
+            intermediary.set_ingredient('5', text) 
+    def ingredient6Selected(self, text):
+        if text != '---select---':
+            intermediary.set_ingredient('6', text) 
+
+    def nextId(self):
+        intermediary.set_type('side')
+        return wizard.Select_recipe
 
 class SelectRecipe(QtGui.QWizardPage):
     def __init__(self, parent=None):
@@ -827,17 +958,13 @@ class SelectRecipe(QtGui.QWizardPage):
         pic.setGeometry(0,0,700,225)
         pic.setPixmap(QtGui.QPixmap(os.getcwd() + "/images/koobkooc-01.jpg"))
         self.recipes = QtGui.QListWidget()
-        #self.recipes.clicked.connect(self.listclicked)
         label = QtGui.QLabel('Select a recipe to view')
         self.searchButton = QtGui.QPushButton('Run Search', self)
         self.searchButton.clicked.connect(self.search)
         self.searchButton.move(350, 230)
         self.strictLabel = QtGui.QLabel('Strict Search?')
-        #self.strictLabel.move(190, 230)
         self.strictRadio = QtGui.QRadioButton('&yes', self)
-        #self.strictRadio.move(220, 230)
         self.nonstrictRadio = QtGui.QRadioButton('&no', self)
-        #self.nonstrictRadio.move(240, 230)
         grid = QtGui.QGridLayout()
         grid.setSpacing(10)
         grid.addWidget(pic, 1, 0)
@@ -850,14 +977,18 @@ class SelectRecipe(QtGui.QWizardPage):
 
     def search(self):
         self.recipes.clear()
-        MEAT = intermediary.get_meat()
-        VEGGIES = intermediary.get_veggies()
-        NUM = len(VEGGIES)
-        STARCH = intermediary.get_starch()
         strict = False
-        if self.strictRadio.isChecked() == True:
+        if self.strictRadio.isChecked():
             strict = True
-        RECIPES = database.SEARCH_MAIN(MEAT, VEGGIES, STARCH, strict)
+        if intermediary.get_type() == 'main':
+            MEAT = intermediary.get_meat()
+            VEGGIES = intermediary.get_veggies()
+            NUM = len(VEGGIES)
+            STARCH = intermediary.get_starch()
+            RECIPES = database.SEARCH_MAIN(MEAT, VEGGIES, STARCH, strict)
+        elif intermediary.get_type() == 'side':
+            INGREDIENTS = intermediary.get_ingredients()
+            RECIPES = database.SEARCH_SIDE(INGREDIENTS, strict)
         if len(RECIPES) > 0:
             for x in RECIPES:
                 item = QtGui.QListWidgetItem(x)
@@ -866,8 +997,10 @@ class SelectRecipe(QtGui.QWizardPage):
 
     def listclicked(self, item):
         recipe = str(self.recipes.currentItem().text())
-        #recipe_text = database.Recipe_text(recipe)
-        database.FIND_MAIN(recipe)
+        if intermediary.get_type() == 'main':
+            database.FIND_MAIN(recipe)
+        elif intermediary.get_type() == 'side':
+            database.FIND_SIDE(recipe)
 
 class ViewRecipe(QtGui.QWizardPage):
     def __init__(self, parent=None):
