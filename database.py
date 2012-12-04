@@ -58,13 +58,14 @@ def ADD_SIDE():
     name = intermediary.get_name()
     recipe = intermediary.get_recipe()
     dish_type = intermediary.get_type()
-    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?)', (name, dish_type, recipe))
+    cur.execute('insert or ignore into recipes (name, type, recipe_file) values (?,?,?)', (name, dish_type, recipe))
     rid = get_recipe_id(name)
-    INGREDIENTS = intermediay.get_ingredients()
+    INGREDIENTS = intermediary.get_ingredients()
     for ingred in INGREDIENTS.values():
         if ingred != '':
             add_ingredient(ingred)
             id = get_ingredient_id(ingred)
+            print(id)
             add_side_ingredient(rid, id)
 
 def DELETE(recipe):
@@ -126,6 +127,7 @@ def FIND_MAIN(recipe):
     '''finds the meat, veggies, and starch that go with a main dish recipe'''
     rid = get_recipe_id(recipe)
     intermediary.set_name(recipe)
+    intermediary.set_type(get_recipe_type(recipe))
     #find the meat
     mid = get_recipe_meat(rid)
     if mid != 'None':
@@ -143,6 +145,20 @@ def FIND_MAIN(recipe):
         intermediary.set_starch(get_starch_name(sid))
     #find the recipe
     intermediary.set_recipe(get_recipe_text(recipe))
+
+def FIND_SIDE(recipe):
+    '''finds the ingredients that go with a side dish recipe'''
+    rid = get_recipe_id(recipe)
+    intermediary.set_name(recipe)
+    intermediary.set_type(get_recipe_type(recipe))
+    # find the ingredients
+    IIDS = get_side_ingredients(rid)
+    INGREDIENTS = []
+    for iid in IIDS:
+        INGREDIENTS.append(get_ingredient_name(iid))
+    intermediary.set_ingredients(INGREDIENTS)
+    intermediary.set_recipe(get_recipe_text(recipe))
+
 
 def SEARCH_MAIN(meat, VEGGIES, starch, strict):
     num_veggies = len(VEGGIES)
@@ -187,11 +203,38 @@ def SEARCH_MAIN(meat, VEGGIES, starch, strict):
                                         if item[0].isdigit() else float('inf'), item))
     return qualifying_recipes
 
-def get_recipe_names():
-    '''gets the names of all the recipes in the database'''
+def SEARCH_SIDE(ingredients, strict):
+    IIDS = set()
+    for ingred in ingredients.values():
+        if ingred != '':
+            IIDS.add(get_ingredient_id(ingred))
+    
+    partial = set()
+    for id in IIDS:
+        for row in cur.execute('select recipe_id from side_ingredients where ingredient_id=%u' % id):
+            partial.add(row[0])
+    qualifying_recipes = set()
+    for id in partial:
+        temp = set(get_side_ingredients(id))
+        if strict:
+            if temp == IIDS:
+                qualifying_recipes.add(get_recipe_name(id))
+        elif not strict:
+            if temp.intersection(IIDS) > set():
+                qualifying_recipes.add(get_recipe_name(id))
+    qualifying_recipes = sorted(qualifying_recipes, key=lambda item: (int(item.partition(' ')[0])
+                                        if item[0].isdigit() else float('inf'), item))
+    return qualifying_recipes
+                
+
+
+def get_recipe_names(dish_type):
+    '''gets the names of all the recipes of certain type in the database'''
     recipes = []
-    for row in cur.execute('select name from recipes order by name'):
+    #dish_type = intermediary.get_type()
+    for row in cur.execute('select name from recipes where type="%s" order by name' % dish_type):
         recipes.append(row[0])
+    print(recipes)
     return recipes
 
 def get_veggie_names():
@@ -207,6 +250,13 @@ def get_meat_names():
     for row in cur.execute('select name from meats order by name'):
         MEATS.add(row[0])
     return MEATS
+
+def get_ingredient_names():
+    '''gets the names of all the ingredients in the database'''
+    INGREDIENTS = set()
+    for row in cur.execute('select name from ingredients order by name'):
+        INGREDIENTS.add(row[0])
+    return INGREDIENTS
 
 def get_recipe_id(recipe):
     '''gets the ID of a recipe'''
@@ -239,6 +289,11 @@ def add_ingredient(ingredient):
 def get_ingredient_id(ingredient):
     '''gets the ID of an ingredient'''
     for row in cur.execute('select id from ingredients where name="%s"' % ingredient):
+        return row[0]
+
+def get_ingredient_name(ingredient):
+    '''gets the name of an ingredient'''
+    for row in cur.execute('select name from ingredients where id=%u' % ingredient):
         return row[0]
 	
 def get_veggie_id(veggie):
@@ -285,6 +340,12 @@ def get_recipe_veggies(recipe_id):
     for row in cur.execute('select veggie_id from recipe_veggies where recipe_id=%u' % recipe_id):
         VEGGIES.append(row[0])
     return VEGGIES
+
+def get_side_ingredients(recipe_id):
+    INGREDIENTS = []
+    for row in cur.execute('select ingredient_id from side_ingredients where recipe_id=%u' % recipe_id):
+        INGREDIENTS.append(row[0])
+    return INGREDIENTS
 
 def get_recipe_starch(recipe_id):
     for row in cur.execute('select starch_id from recipe_starches where recipe_id=%u' % recipe_id):
